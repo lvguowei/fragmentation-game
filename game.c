@@ -37,6 +37,7 @@ typedef struct Brick {
 //-------------------v-----------------------------------------------------------------
 static bool pause = false;
 static bool finish = false;
+static bool quit = false;
 static GameScreen currentScreen;
 static int score = 0;
 static int highestScore = 0;
@@ -110,7 +111,7 @@ int main(void) {
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
 #else
   SetTargetFPS(60);
-  while (!WindowShouldClose()) {
+  while (!quit && !WindowShouldClose()) {
     UpdateDrawFrame();
   }
 #endif
@@ -183,7 +184,7 @@ void UpdateGame(void) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       Vector2 mousePos = GetMousePosition();
       if (CheckCollisionPointRec(mousePos, closeButtonRec)) {
-        CloseWindow();
+        quit = true;
       } else {
         currentScreen = GAMEPLAY;
         baseTime = GetTime();
