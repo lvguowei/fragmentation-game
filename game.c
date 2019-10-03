@@ -11,13 +11,13 @@
 #endif
 
 #define PLAYER_MAX_LIFE 5
-#define LINES_OF_BRICKS 80
-#define BRICKS_PER_LINE 40
+#define LINES_OF_BRICKS 30
+#define BRICKS_PER_LINE 20
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_H 100
 #define MARGIN_V 100
-#define TIMER_FONT_SIZE 800
+#define TIMER_FONT_SIZE 500
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -32,12 +32,14 @@ typedef struct Brick {
 
 //------------------------------------------------------------------------------------
 // Global Variables Declaration
-//------------------------------------------------------------------------------------
+//-------------------v-----------------------------------------------------------------
 
 static bool pause = false;
 static bool finish = false;
 static GameScreen currentScreen;
 static int score = 0;
+static int highestScore = 0;
+static bool prize = false;
 static int baseTime = 0;
 static int pauseTime = 0;
 static int elapsedTime = 0;
@@ -140,6 +142,8 @@ void InitGame(void) {
 
   score = 0;
 
+  prize = false;
+
   closeButtonRec = (Rectangle){GetScreenWidth() - 80, 0, 80, 80};
 
   // Calculate Brick size
@@ -172,6 +176,9 @@ void InitGame(void) {
 
 // Update game (one frame)
 void UpdateGame(void) {
+  // Update framesCount
+  framesCount++;
+
   switch (currentScreen) {
   case TITLE: {
     UpdateMusicStream(titleMusic);
@@ -194,6 +201,17 @@ void UpdateGame(void) {
     UpdateMusicStream(bgMusic);
     if (finish) {
       currentScreen = ENDING;
+
+      framesCount = 0;
+
+      StopMusicStream(titleMusic);
+      StopMusicStream(bgMusic);
+      PlayMusicStream(endingMusic);
+
+      if (score > highestScore) {
+        highestScore = score;
+        prize = true;
+      }
     } else {
       if (IsKeyPressed(KEY_P)) {
         // Reset baseTime when unpause game
@@ -206,8 +224,6 @@ void UpdateGame(void) {
       }
 
       if (!pause) {
-        // Update framesCount
-        framesCount++;
 
         int prevElapseTime = elapsedTime;
         // Calculate elapsed time
@@ -216,11 +232,7 @@ void UpdateGame(void) {
         if (elapsedTime > 60) {
           // Times up!
           finish = true;
-          framesCount = 0;
 
-          StopMusicStream(titleMusic);
-          StopMusicStream(bgMusic);
-          PlayMusicStream(endingMusic);
         } else {
           if (elapsedTime >= 50 && elapsedTime <= 60) {
             if (elapsedTime == prevElapseTime + 1) {
@@ -287,14 +299,26 @@ void DrawGame(void) {
 
   switch (currentScreen) {
   case TITLE: {
-    DrawText("FRAGMENTATION GAME",
-             GetScreenWidth() / 2 - MeasureText("FRAGMENTATION GAME", 160) / 2,
-             GetScreenHeight() / 2 - 160, 160, RED);
 
-    DrawText("Touch Screen to Start",
-             GetScreenWidth() / 2 -
-                 MeasureText("Touch Screen to Start", 80) / 2,
-             GetScreenHeight() / 2 - 80 + 300, 80, GRAY);
+    // Game Title
+    DrawText("FRAGMENTATION GAME",
+             GetScreenWidth() / 2 - MeasureText("FRAGMENTATION GAME", 120) / 2,
+             GetScreenHeight() / 2 - 120, 120, RED);
+
+    // Touch to start
+    if ((framesCount / 40) % 2 == 0) {
+      DrawText("Touch Screen to Start",
+               GetScreenWidth() / 2 -
+               MeasureText("Touch Screen to Start", 80) / 2,
+               GetScreenHeight() / 2 - 80 + 300, 80, GRAY);
+    } else {
+      DrawText("Touch Screen to Start",
+               GetScreenWidth() / 2 -
+               MeasureText("Touch Screen to Start", 80) / 2,
+               GetScreenHeight() / 2 - 80 + 300, 80, RAYWHITE);
+    }
+
+    // Close button
     DrawRectangleLinesEx(closeButtonRec, 5, LIGHTGRAY);
     DrawLine(closeButtonRec.x, closeButtonRec.y,
              closeButtonRec.x + closeButtonRec.width,
@@ -374,6 +398,14 @@ void DrawGame(void) {
 
     DrawText(scoreLine, GetScreenWidth() / 2 - MeasureText(scoreLine, 100) / 2,
              GetScreenHeight() / 2 - 100 + 200, 100, GRAY);
+
+    if (prize) {
+      if ((framesCount / 40) % 2 == 0) {
+        char newRecordLine[] = "New Record!";
+        DrawText(newRecordLine, GetScreenWidth() / 2 - MeasureText(scoreLine, 100) / 2,
+                 GetScreenHeight() / 2 - 100 + 200 + 200, 100, RED);
+      }
+    }
     break;
   }
   default:
