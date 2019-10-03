@@ -17,9 +17,12 @@
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
 #define ALPHA 40
-#define MARGIN_H 100
-#define MARGIN_V 100
-#define TIMER_FONT_SIZE 500
+#define MARGIN_LEFT 300
+#define MARGIN_RIGHT 50
+#define MARGIN_TOP 50
+#define MARGIN_DOWN 50
+#define TIMER_FONT_SIZE 260
+#define SCORE_FONT_SIZE 100
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -140,8 +143,9 @@ void InitGame(void) {
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
 
   // Calculate Brick size
-  brickSize = (Vector2){(SCREEN_WIDTH - MARGIN_H * 2) / BRICKS_PER_LINE,
-                        (SCREEN_HEIGHT - MARGIN_V * 2) / LINES_OF_BRICKS};
+  brickSize =
+      (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / BRICKS_PER_LINE,
+                (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / LINES_OF_BRICKS};
 
   // Select a random target brick
   targetX = rand() % BRICKS_PER_LINE;
@@ -152,8 +156,8 @@ void InitGame(void) {
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
       brick[i][j].position =
-          (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_H,
-                    i * brickSize.y + brickSize.y / 2 + MARGIN_V};
+          (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_LEFT,
+                    i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
 
       brick[i][j].active = false;
       if (rand() % 10 <= 10 - fragmentationLevel) {
@@ -265,8 +269,8 @@ void UpdateGame(void) {
           if (IsMouseButtonPressed(0)) {
             // Handle brick clicked
             Vector2 mousePos = GetMousePosition();
-            int i = (mousePos.y - MARGIN_V) / brickSize.y;
-            int j = (mousePos.x - MARGIN_H) / brickSize.x;
+            int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
+            int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
             if (i == targetY && j == targetX) {
               int nextX, nextY;
@@ -378,20 +382,20 @@ void DrawGame(void) {
     }
 
     // Draw countdown timer
-    if (!pause) {
-      char stime[4];
-      sprintf(stime, "%d", DURATION - elapsedTime);
-      Color textColor;
-      if (elapsedTime >= DURATION - 5) {
-        textColor = timerColorRed;
-      } else {
-        textColor = timerColor;
-      }
-      DrawText(stime,
-               SCREEN_WIDTH / 2 - MeasureText(stime, TIMER_FONT_SIZE) / 2,
-               SCREEN_HEIGHT / 2 - TIMER_FONT_SIZE, TIMER_FONT_SIZE, textColor);
+    char stime[4];
+    sprintf(stime, "%d", DURATION - elapsedTime);
+    Color textColor;
+    if (elapsedTime >= DURATION - 5) {
+      textColor = timerColorRed;
+    } else {
+      textColor = timerColor;
     }
+    DrawText(stime, 10, MARGIN_TOP, TIMER_FONT_SIZE, textColor);
 
+    // Draw score
+    char sscore[4];
+    sprintf(sscore, "%d", score);
+    DrawText(sscore, 10, SCREEN_HEIGHT - MARGIN_DOWN - SCORE_FONT_SIZE, SCORE_FONT_SIZE, SKYBLUE);
     break;
   }
   case ENDING: {
