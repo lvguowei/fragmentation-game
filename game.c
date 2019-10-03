@@ -49,7 +49,7 @@ static int elapsedTime = 0;
 static Color timerColor = (Color){0, 158, 47, 40};
 static Color timerColorRed = (Color){230, 41, 55, 40};
 
-static const Color FILE_COLORS_DARK[FILE_NUM] = {
+static const Color FILE_COLORS[FILE_NUM] = {
     (Color){255, 161, 0, 255},   // orange
     (Color){0, 228, 48, 255},    // green
     (Color){200, 122, 255, 255}, // purple
@@ -57,19 +57,12 @@ static const Color FILE_COLORS_DARK[FILE_NUM] = {
     (Color){255, 203, 0, 255}    // gold
 };
 
-static const Color FILE_COLORS_LIGHT[FILE_NUM] = {
-    (Color){255, 161, 0, ALPHA},   // orange
-    (Color){0, 228, 48, ALPHA},    // green
-    (Color){200, 122, 255, ALPHA}, // purple
-    (Color){127, 106, 79, ALPHA},  // brown
-    (Color){255, 203, 0, ALPHA}    // gold
-};
-
 static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE] = {0};
 static Vector2 brickSize = {0};
 static int targetX = 0;
 static int targetY = 0;
 static int framesCount = 0;
+static int fragmentationLevel = 3; // from 1 - 9
 
 static Rectangle closeButtonRec;
 static Rectangle playAgainRec;
@@ -79,7 +72,6 @@ static Sound beepSound;
 static Music titleMusic;
 static Music bgMusic;
 static Music endingMusic;
-
 
 //------------------------------------------------------------------------------------
 // Module Functions Declaration (local)
@@ -95,7 +87,9 @@ static void UpdateDrawFrame(void); // Update and Draw (one frame)
 //------------------------------------------------------------------------------------
 int main(void) {
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 60, 0, 60, 60};
-  playAgainRec = (Rectangle) {SCREEN_WIDTH / 2 - 300, SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
+  playAgainRec =
+      (Rectangle){SCREEN_WIDTH / 2 - 300,
+                  SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fragmentation Game");
   InitAudioDevice();
 
@@ -162,13 +156,42 @@ void InitGame(void) {
                     i * brickSize.y + brickSize.y / 2 + MARGIN_V};
 
       brick[i][j].active = false;
-      if (rand() % 10 <= 6) {
+      if (rand() % 10 <= 10 - fragmentationLevel) {
         brick[i][j].file = prevFile;
       } else {
         int file = rand() % FILE_NUM;
         brick[i][j].file = file;
         prevFile = file;
       }
+    }
+  }
+}
+
+void chooseNextTarget(int *nextX, int *nextY) {
+  if (targetX == BRICKS_PER_LINE - 1 && targetY == LINES_OF_BRICKS - 1) {
+    // target is last brick
+    *nextX = rand() % BRICKS_PER_LINE;
+    *nextY = rand() % LINES_OF_BRICKS;
+  } else {
+
+    int nX = (targetX + 1) % BRICKS_PER_LINE;
+    int nY;
+    if (targetX == BRICKS_PER_LINE - 1) {
+      nY = targetY + 1;
+    } else {
+      nY = targetY;
+    }
+    if (brick[nY][nX].file == brick[targetY][targetX].file) {
+      if (rand() % 10 <= 8) {
+        *nextX = nX;
+        *nextY = nY;
+      } else {
+        *nextX = rand() % BRICKS_PER_LINE;
+        *nextY = rand() % LINES_OF_BRICKS;
+      }
+    } else {
+      *nextX = rand() % BRICKS_PER_LINE;
+      *nextY = rand() % LINES_OF_BRICKS;
     }
   }
 }
@@ -246,19 +269,11 @@ void UpdateGame(void) {
             int j = (mousePos.x - MARGIN_H) / brickSize.x;
 
             if (i == targetY && j == targetX) {
-              // Choose next target brick
-              if (brick[i][j].file ==
-                  brick[i][(j + 1) % BRICKS_PER_LINE].file) {
-                if (rand() % 10 <= 8) {
-                  targetX = (targetX + 1) % BRICKS_PER_LINE;
-                } else {
-                  targetX = rand() % BRICKS_PER_LINE;
-                  targetY = rand() % LINES_OF_BRICKS;
-                }
-              } else {
-                targetX = rand() % BRICKS_PER_LINE;
-                targetY = rand() % LINES_OF_BRICKS;
-              }
+              int nextX, nextY;
+              chooseNextTarget(&nextX, &nextY);
+              targetX = nextX;
+              targetY = nextY;
+
               brick[i][j].active = true;
 
               // Reset framesCount
@@ -310,13 +325,11 @@ void DrawGame(void) {
     // Touch to start
     if ((framesCount / 40) % 2 == 0) {
       DrawText("Touch Screen to Start",
-               SCREEN_WIDTH / 2 -
-               MeasureText("Touch Screen to Start", 80) / 2,
+               SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
                SCREEN_HEIGHT / 2 - 80 + 300, 80, GRAY);
     } else {
       DrawText("Touch Screen to Start",
-               SCREEN_WIDTH / 2 -
-               MeasureText("Touch Screen to Start", 80) / 2,
+               SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
                SCREEN_HEIGHT / 2 - 80 + 300, 80, RAYWHITE);
     }
 
@@ -334,8 +347,8 @@ void DrawGame(void) {
     // Draw bricks
     for (int i = 0; i < LINES_OF_BRICKS; i++) {
       for (int j = 0; j < BRICKS_PER_LINE; j++) {
-        Color dark = FILE_COLORS_DARK[brick[i][j].file];
-        Color light = FILE_COLORS_LIGHT[brick[i][j].file];
+        Color dark = FILE_COLORS[brick[i][j].file];
+        Color light = RAYWHITE;
         Color targetColor;
         if ((framesCount / 20) % 2 == 0) {
           targetColor = dark;
@@ -348,15 +361,9 @@ void DrawGame(void) {
                         brick[i][j].position.y - brickSize.y / 2, brickSize.x,
                         brickSize.y, targetColor);
         } else {
-          if (brick[i][j].active) {
-            DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
-                          brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                          brickSize.y, dark);
-          } else {
-            DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
-                          brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                          brickSize.y, light);
-          }
+          DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
+                        brick[i][j].position.y - brickSize.y / 2, brickSize.x,
+                        brickSize.y, dark);
         }
         DrawRectangleLines(brick[i][j].position.x - brickSize.x / 2,
                            brick[i][j].position.y - brickSize.y / 2,
@@ -380,17 +387,16 @@ void DrawGame(void) {
       } else {
         textColor = timerColor;
       }
-      DrawText(
-          stime, SCREEN_WIDTH / 2 - MeasureText(stime, TIMER_FONT_SIZE) / 2,
-          SCREEN_HEIGHT / 2 - TIMER_FONT_SIZE, TIMER_FONT_SIZE, textColor);
+      DrawText(stime,
+               SCREEN_WIDTH / 2 - MeasureText(stime, TIMER_FONT_SIZE) / 2,
+               SCREEN_HEIGHT / 2 - TIMER_FONT_SIZE, TIMER_FONT_SIZE, textColor);
     }
 
     break;
   }
   case ENDING: {
     ClearBackground(RAYWHITE);
-    DrawText("GAME OVER",
-             SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
+    DrawText("GAME OVER", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
              SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
 
     char scoreLine[32] = "SCORE: ";
@@ -403,12 +409,15 @@ void DrawGame(void) {
 
     if (prize) {
       if ((framesCount / 40) % 2 == 0) {
-        DrawText("NEW RECORD", SCREEN_WIDTH / 2 - MeasureText("NEW RECORD", 100) / 2,
+        DrawText("NEW RECORD",
+                 SCREEN_WIDTH / 2 - MeasureText("NEW RECORD", 100) / 2,
                  SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200, 100, RED);
       }
     }
     DrawRectangleRec(playAgainRec, SKYBLUE);
-    DrawText("PLAY AGAIN", playAgainRec.x + (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
+    DrawText("PLAY AGAIN",
+             playAgainRec.x +
+                 (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
              playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
     break;
   }
