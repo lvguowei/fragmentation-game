@@ -12,7 +12,7 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define DURATION 60
+#define DURATION 30
 #define LINES_OF_BRICKS 30
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
@@ -256,7 +256,7 @@ void UpdateGame(void) {
           finish = true;
 
         } else {
-          if (elapsedTime >= DURATION - 10 && elapsedTime <= DURATION) {
+          if (elapsedTime >= DURATION - 5 && elapsedTime <= DURATION) {
             if (elapsedTime == prevElapseTime + 1) {
               PlaySound(beepSound);
             }
@@ -382,7 +382,7 @@ void DrawGame(void) {
       char stime[4];
       sprintf(stime, "%d", DURATION - elapsedTime);
       Color textColor;
-      if (elapsedTime >= DURATION - 10) {
+      if (elapsedTime >= DURATION - 5) {
         textColor = timerColorRed;
       } else {
         textColor = timerColor;
