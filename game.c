@@ -369,10 +369,20 @@ void DrawGame(void) {
                         brick[i][j].position.y - brickSize.y / 2, brickSize.x,
                         brickSize.y, dark);
         }
-        DrawRectangleLines(brick[i][j].position.x - brickSize.x / 2,
-                           brick[i][j].position.y - brickSize.y / 2,
-                           brickSize.x, brickSize.y, LIGHTGRAY);
       }
+    }
+
+    // Draw grid
+    for (int i = 0; i <= LINES_OF_BRICKS; i++) {
+      DrawLine(MARGIN_LEFT, MARGIN_TOP + i * brickSize.y,
+               MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
+               MARGIN_TOP + i * brickSize.y, GRAY);
+    }
+
+    for (int i = 0; i <= BRICKS_PER_LINE; i++) {
+      DrawLine(MARGIN_LEFT + i * brickSize.x, MARGIN_TOP,
+               MARGIN_LEFT + i * brickSize.x,
+               MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, GRAY);
     }
 
     if (pause) {
@@ -395,7 +405,8 @@ void DrawGame(void) {
     // Draw score
     char sscore[4];
     sprintf(sscore, "%d", score);
-    DrawText(sscore, 10, SCREEN_HEIGHT - MARGIN_DOWN - SCORE_FONT_SIZE, SCORE_FONT_SIZE, SKYBLUE);
+    DrawText(sscore, 10, SCREEN_HEIGHT - MARGIN_DOWN - SCORE_FONT_SIZE,
+             SCORE_FONT_SIZE, SKYBLUE);
     break;
   }
   case ENDING: {
