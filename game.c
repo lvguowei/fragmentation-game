@@ -12,7 +12,7 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define DURATION 10
+#define DURATION 60
 #define LINES_OF_BRICKS 30
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
