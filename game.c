@@ -21,8 +21,10 @@
 #define MARGIN_RIGHT 50
 #define MARGIN_TOP 50
 #define MARGIN_DOWN 50
-#define TIMER_FONT_SIZE 200
-#define SCORE_FONT_SIZE 100
+#define TIMER_FONT_SIZE 150
+#define SCORE_FONT_SIZE 150
+#define STAGE_FONT_SIZE 150
+#define LABEL_FONT_SIZE 50
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -39,6 +41,7 @@ typedef struct Brick {
 // Global Variables Declaration
 //-------------------v-----------------------------------------------------------------
 static GameScreen currentScreen;
+static int stage = 1;
 static bool pause = false;
 static bool finish = false;
 static bool quit = false;
@@ -52,13 +55,8 @@ static int elapsedTime = 0;
 static Color timerColor;
 static Color timerColorAlarm;
 
-static const Color FILE_COLORS[FILE_NUM] = {
-    (Color){255, 161, 0, 255},   // orange
-    (Color){0, 228, 48, 255},    // green
-    (Color){200, 122, 255, 255}, // purple
-    (Color){127, 106, 79, 255},  // brown
-    (Color){255, 203, 0, 255}    // gold
-};
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
+                                            ORANGE};
 
 static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE] = {0};
 static Vector2 brickSize = {0};
@@ -174,7 +172,7 @@ void InitGame(void) {
   }
 }
 
-void chooseRandomBrick(int* x, int* y) {
+void chooseRandomBrick(int *x, int *y) {
   do {
     *x = rand() % BRICKS_PER_LINE;
     *y = rand() % LINES_OF_BRICKS;
@@ -193,7 +191,8 @@ void chooseNextTarget(int *nextX, int *nextY) {
     } else {
       nY = targetY;
     }
-    if (brick[nY][nX].file == brick[targetY][targetX].file && !brick[nY][nX].active) {
+    if (brick[nY][nX].file == brick[targetY][targetX].file &&
+        !brick[nY][nX].active) {
       if (rand() % 10 <= 9) {
         *nextX = nX;
         *nextY = nY;
@@ -403,7 +402,18 @@ void DrawGame(void) {
                SCREEN_HEIGHT / 2 - 40, 40, GRAY);
     }
 
+    // Draw stage
+    DrawText("STAGE", 10, MARGIN_TOP, LABEL_FONT_SIZE, ORANGE);
+
+    char sstage[8];
+    sprintf(sstage, "%d", stage);
+    int stageY = MARGIN_TOP + LABEL_FONT_SIZE + 30;
+    DrawText(sstage, 10, stageY, STAGE_FONT_SIZE, ORANGE);
+
     // Draw countdown timer
+    int timerLabelY = stageY + 250;
+    DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, timerColor);
+
     char stime[4];
     sprintf(stime, "%d", DURATION - elapsedTime);
     Color textColor;
@@ -412,13 +422,16 @@ void DrawGame(void) {
     } else {
       textColor = timerColor;
     }
-    DrawText(stime, 10, MARGIN_TOP, TIMER_FONT_SIZE, textColor);
+    int timerY = timerLabelY + LABEL_FONT_SIZE + 30;
+    DrawText(stime, 10, timerY, TIMER_FONT_SIZE, textColor);
 
     // Draw score
+    int scoreLableY = timerY + 250;
+    DrawText("SCORE", 10, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
     char sscore[4];
     sprintf(sscore, "%d", score);
-    DrawText(sscore, 10, SCREEN_HEIGHT - MARGIN_DOWN - SCORE_FONT_SIZE,
-             SCORE_FONT_SIZE, SKYBLUE);
+    int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
+    DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
     break;
   }
   case ENDING: {
