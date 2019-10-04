@@ -532,6 +532,7 @@ void UnloadGame(void) {
   UnloadMusicStream(endingMusic);
   UnloadSound(clickSound);
   UnloadSound(beepSound);
+  UnloadSound(stageClearSound);
   CloseAudioDevice();
 }
 
