@@ -21,7 +21,7 @@
 #define MARGIN_RIGHT 50
 #define MARGIN_TOP 50
 #define MARGIN_DOWN 50
-#define TIMER_FONT_SIZE 260
+#define TIMER_FONT_SIZE 200
 #define SCORE_FONT_SIZE 100
 
 //----------------------------------------------------------------------------------
@@ -38,10 +38,10 @@ typedef struct Brick {
 //------------------------------------------------------------------------------------
 // Global Variables Declaration
 //-------------------v-----------------------------------------------------------------
+static GameScreen currentScreen;
 static bool pause = false;
 static bool finish = false;
 static bool quit = false;
-static GameScreen currentScreen;
 static int score = 0;
 static int highestScore = 0;
 static bool prize = false;
@@ -49,8 +49,8 @@ static int baseTime = 0;
 static int pauseTime = 0;
 static int elapsedTime = 0;
 
-static Color timerColor = (Color){0, 158, 47, 40};
-static Color timerColorRed = (Color){230, 41, 55, 40};
+static Color timerColor;
+static Color timerColorAlarm;
 
 static const Color FILE_COLORS[FILE_NUM] = {
     (Color){255, 161, 0, 255},   // orange
@@ -95,6 +95,9 @@ int main(void) {
                   SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fragmentation Game");
   InitAudioDevice();
+
+  timerColor = Fade(GREEN, 0.5);
+  timerColorAlarm = Fade(RED, 0.5);
 
   clickSound = LoadSound("resources/click.mp3");
   beepSound = LoadSound("resources/beep.mp3");
@@ -171,13 +174,18 @@ void InitGame(void) {
   }
 }
 
+void chooseRandomBrick(int* x, int* y) {
+  do {
+    *x = rand() % BRICKS_PER_LINE;
+    *y = rand() % LINES_OF_BRICKS;
+  } while (brick[*y][*x].active);
+}
+
 void chooseNextTarget(int *nextX, int *nextY) {
   if (targetX == BRICKS_PER_LINE - 1 && targetY == LINES_OF_BRICKS - 1) {
     // target is last brick
-    *nextX = rand() % BRICKS_PER_LINE;
-    *nextY = rand() % LINES_OF_BRICKS;
+    chooseRandomBrick(nextX, nextY);
   } else {
-
     int nX = (targetX + 1) % BRICKS_PER_LINE;
     int nY;
     if (targetX == BRICKS_PER_LINE - 1) {
@@ -185,17 +193,15 @@ void chooseNextTarget(int *nextX, int *nextY) {
     } else {
       nY = targetY;
     }
-    if (brick[nY][nX].file == brick[targetY][targetX].file) {
-      if (rand() % 10 <= 8) {
+    if (brick[nY][nX].file == brick[targetY][targetX].file && !brick[nY][nX].active) {
+      if (rand() % 10 <= 9) {
         *nextX = nX;
         *nextY = nY;
       } else {
-        *nextX = rand() % BRICKS_PER_LINE;
-        *nextY = rand() % LINES_OF_BRICKS;
+        chooseRandomBrick(nextX, nextY);
       }
     } else {
-      *nextX = rand() % BRICKS_PER_LINE;
-      *nextY = rand() % LINES_OF_BRICKS;
+      chooseRandomBrick(nextX, nextY);
     }
   }
 }
@@ -352,7 +358,7 @@ void DrawGame(void) {
     for (int i = 0; i < LINES_OF_BRICKS; i++) {
       for (int j = 0; j < BRICKS_PER_LINE; j++) {
         Color dark = FILE_COLORS[brick[i][j].file];
-        Color light = RAYWHITE;
+        Color light = Fade(dark, 0.4);
         Color targetColor;
         if ((framesCount / 20) % 2 == 0) {
           targetColor = dark;
@@ -365,9 +371,15 @@ void DrawGame(void) {
                         brick[i][j].position.y - brickSize.y / 2, brickSize.x,
                         brickSize.y, targetColor);
         } else {
+          Color color;
+          if (brick[i][j].active) {
+            color = RAYWHITE;
+          } else {
+            color = dark;
+          }
           DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
                         brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                        brickSize.y, dark);
+                        brickSize.y, color);
         }
       }
     }
@@ -376,13 +388,13 @@ void DrawGame(void) {
     for (int i = 0; i <= LINES_OF_BRICKS; i++) {
       DrawLine(MARGIN_LEFT, MARGIN_TOP + i * brickSize.y,
                MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
-               MARGIN_TOP + i * brickSize.y, GRAY);
+               MARGIN_TOP + i * brickSize.y, LIGHTGRAY);
     }
 
     for (int i = 0; i <= BRICKS_PER_LINE; i++) {
       DrawLine(MARGIN_LEFT + i * brickSize.x, MARGIN_TOP,
                MARGIN_LEFT + i * brickSize.x,
-               MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, GRAY);
+               MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, LIGHTGRAY);
     }
 
     if (pause) {
@@ -396,7 +408,7 @@ void DrawGame(void) {
     sprintf(stime, "%d", DURATION - elapsedTime);
     Color textColor;
     if (elapsedTime >= DURATION - 5) {
-      textColor = timerColorRed;
+      textColor = timerColorAlarm;
     } else {
       textColor = timerColor;
     }
