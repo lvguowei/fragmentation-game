@@ -223,6 +223,7 @@ void chooseNextTarget(int *nextX, int *nextY) {
 void goToPlay() {
   currentScreen = GAMEPLAY;
   baseTime = GetTime();
+  StopSound(stageClearSound);
   StopMusicStream(titleMusic);
   PlayMusicStream(bgMusic);
   StopMusicStream(endingMusic);
