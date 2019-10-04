@@ -12,7 +12,7 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define DURATION 30
+#define DURATION 10
 #define LINES_OF_BRICKS 30
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
@@ -64,13 +64,14 @@ static Vector2 brickSize = {0};
 static int targetX = 0;
 static int targetY = 0;
 static int framesCount = 0;
-static int fragmentationLevel = 3; // from 1 - 9
+static int fragmentationLevel = 3; // from 0 - 10
 
 static Rectangle closeButtonRec;
 static Rectangle playAgainRec;
 
 static Sound clickSound;
 static Sound beepSound;
+static Sound stageClearSound;
 static Music titleMusic;
 static Music bgMusic;
 static Music endingMusic;
@@ -100,6 +101,7 @@ int main(void) {
 
   clickSound = LoadSound("resources/click.mp3");
   beepSound = LoadSound("resources/beep.mp3");
+  stageClearSound = LoadSound("resources/clear.mp3");
   titleMusic = LoadMusicStream("resources/title.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
   endingMusic = LoadMusicStream("resources/ending.mp3");
@@ -147,10 +149,10 @@ void InitGame(void) {
     fragmentationLevel = 2;
   }
   if (stage == 2) {
-    fragmentationLevel = 5;
+    fragmentationLevel = 4;
   }
   if (stage == 3) {
-    fragmentationLevel = 9;
+    fragmentationLevel = 10;
   }
 
   // Calculate Brick size
@@ -228,7 +230,11 @@ void goToEnding() {
   framesCount = 0;
   StopMusicStream(titleMusic);
   StopMusicStream(bgMusic);
-  PlayMusicStream(endingMusic);
+  if (stage == STAGE_NUM) {
+    PlayMusicStream(endingMusic);
+  } else {
+    PlaySound(stageClearSound);
+  }
   if (score > highestScore) {
     highestScore = score;
     prize = true;
@@ -321,7 +327,9 @@ void UpdateGame(void) {
     break;
   }
   case ENDING: {
-    UpdateMusicStream(endingMusic);
+    if (stage == STAGE_NUM) {
+      UpdateMusicStream(endingMusic);
+    }
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       Vector2 mousePos = GetMousePosition();
       if (CheckCollisionPointRec(mousePos, playAgainRec)) {
@@ -440,7 +448,8 @@ void DrawGame(void) {
 
     char stime[4];
     int t = DURATION - elapsedTime;
-    if (t < 0) t = 0;
+    if (t < 0)
+      t = 0;
     sprintf(stime, "%d", t);
     Color textColor;
     if (elapsedTime >= DURATION - 5) {
