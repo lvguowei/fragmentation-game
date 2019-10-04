@@ -12,7 +12,7 @@
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
-#define DURATION 10
+#define DURATION 30
 #define LINES_OF_BRICKS 30
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
@@ -52,6 +52,8 @@ static bool prize = false;
 static int baseTime = 0;
 static int pauseTime = 0;
 static int elapsedTime = 0;
+
+static Vector2 cursorPos = {0};
 
 static Color timerColor;
 static Color timerColorAlarm;
@@ -106,7 +108,8 @@ int main(void) {
   bgMusic = LoadMusicStream("resources/bg.mp3");
   endingMusic = LoadMusicStream("resources/ending.mp3");
   InitGame();
-  ToggleFullscreen();
+  //ToggleFullscreen();
+  HideCursor();
 
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateDrawFrame, 0, 1);
@@ -249,6 +252,7 @@ void goToTitle() {
 
 // Update game (one frame)
 void UpdateGame(void) {
+  cursorPos = GetMousePosition();
   // Update framesCount
   framesCount++;
 
@@ -515,6 +519,9 @@ void DrawGame(void) {
     break;
   }
 
+  DrawLineEx(cursorPos, (Vector2){cursorPos.x + 40, cursorPos.y + 40}, 8, BLACK);
+  DrawLineEx(cursorPos, (Vector2){cursorPos.x + 30, cursorPos.y}, 8, BLACK);
+  DrawLineEx(cursorPos, (Vector2){cursorPos.x, cursorPos.y + 30}, 8, BLACK);
   EndDrawing();
 }
 
