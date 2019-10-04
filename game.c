@@ -439,7 +439,9 @@ void DrawGame(void) {
     DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, timerColor);
 
     char stime[4];
-    sprintf(stime, "%d", DURATION - elapsedTime);
+    int t = DURATION - elapsedTime;
+    if (t < 0) t = 0;
+    sprintf(stime, "%d", t);
     Color textColor;
     if (elapsedTime >= DURATION - 5) {
       textColor = timerColorAlarm;
@@ -462,10 +464,12 @@ void DrawGame(void) {
     ClearBackground(RAYWHITE);
 
     if (stage < STAGE_NUM) {
-      DrawText("WELL DONE!", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
+      DrawText("WELL DONE!",
+               SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
                SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
     } else {
-      DrawText("GAME OVER", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
+      DrawText("GAME OVER",
+               SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
                SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
     }
 
@@ -488,12 +492,12 @@ void DrawGame(void) {
     if (stage < STAGE_NUM) {
       DrawText("NEXT STAGE",
                playAgainRec.x +
-               (playAgainRec.width - MeasureText("NEXT STAGE", 60)) / 2,
+                   (playAgainRec.width - MeasureText("NEXT STAGE", 60)) / 2,
                playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
     } else {
       DrawText("PLAY AGAIN",
                playAgainRec.x +
-               (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
+                   (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
                playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
     }
     break;
