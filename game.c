@@ -25,6 +25,7 @@
 #define SCORE_FONT_SIZE 150
 #define STAGE_FONT_SIZE 150
 #define LABEL_FONT_SIZE 50
+#define STAGE_NUM 3
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -137,11 +138,20 @@ void InitGame(void) {
 
   finish = false;
 
-  score = 0;
-
   prize = false;
 
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
+
+  // Set fragmentationLevel based on stage
+  if (stage == 1) {
+    fragmentationLevel = 2;
+  }
+  if (stage == 2) {
+    fragmentationLevel = 5;
+  }
+  if (stage == 3) {
+    fragmentationLevel = 9;
+  }
 
   // Calculate Brick size
   brickSize =
@@ -205,6 +215,32 @@ void chooseNextTarget(int *nextX, int *nextY) {
   }
 }
 
+void goToPlay() {
+  currentScreen = GAMEPLAY;
+  baseTime = GetTime();
+  StopMusicStream(titleMusic);
+  PlayMusicStream(bgMusic);
+  StopMusicStream(endingMusic);
+}
+
+void goToEnding() {
+  currentScreen = ENDING;
+  framesCount = 0;
+  StopMusicStream(titleMusic);
+  StopMusicStream(bgMusic);
+  PlayMusicStream(endingMusic);
+  if (score > highestScore) {
+    highestScore = score;
+    prize = true;
+  }
+}
+
+void goToTitle() {
+  score = 0;
+  stage = 1;
+  InitGame();
+}
+
 // Update game (one frame)
 void UpdateGame(void) {
   // Update framesCount
@@ -218,12 +254,7 @@ void UpdateGame(void) {
       if (CheckCollisionPointRec(mousePos, closeButtonRec)) {
         quit = true;
       } else {
-        currentScreen = GAMEPLAY;
-        baseTime = GetTime();
-
-        StopMusicStream(titleMusic);
-        PlayMusicStream(bgMusic);
-        StopMusicStream(endingMusic);
+        goToPlay();
       }
     }
     break;
@@ -231,18 +262,7 @@ void UpdateGame(void) {
   case GAMEPLAY: {
     UpdateMusicStream(bgMusic);
     if (finish) {
-      currentScreen = ENDING;
-
-      framesCount = 0;
-
-      StopMusicStream(titleMusic);
-      StopMusicStream(bgMusic);
-      PlayMusicStream(endingMusic);
-
-      if (score > highestScore) {
-        highestScore = score;
-        prize = true;
-      }
+      goToEnding();
     } else {
       if (IsKeyPressed(KEY_P)) {
         // Reset baseTime when unpause game
@@ -255,7 +275,6 @@ void UpdateGame(void) {
       }
 
       if (!pause) {
-
         int prevElapseTime = elapsedTime;
         // Calculate elapsed time
         elapsedTime = GetTime() - baseTime;
@@ -289,7 +308,7 @@ void UpdateGame(void) {
               framesCount = 0;
 
               // Increase score
-              score += 10;
+              score += 5;
 
               // Play sound
               PlaySound(clickSound);
@@ -303,11 +322,16 @@ void UpdateGame(void) {
   }
   case ENDING: {
     UpdateMusicStream(endingMusic);
-
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       Vector2 mousePos = GetMousePosition();
       if (CheckCollisionPointRec(mousePos, playAgainRec)) {
-        InitGame();
+        if (stage < STAGE_NUM) {
+          stage++;
+          InitGame();
+          goToPlay();
+        } else {
+          goToTitle();
+        }
       }
     }
     break;
@@ -428,7 +452,7 @@ void DrawGame(void) {
     // Draw score
     int scoreLableY = timerY + 250;
     DrawText("SCORE", 10, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
-    char sscore[4];
+    char sscore[32];
     sprintf(sscore, "%d", score);
     int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
     DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
@@ -436,8 +460,14 @@ void DrawGame(void) {
   }
   case ENDING: {
     ClearBackground(RAYWHITE);
-    DrawText("GAME OVER", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
-             SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
+
+    if (stage < STAGE_NUM) {
+      DrawText("WELL DONE!", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
+               SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
+    } else {
+      DrawText("GAME OVER", SCREEN_WIDTH / 2 - MeasureText("GAME OVER", 160) / 2,
+               SCREEN_HEIGHT / 2 - 200 - 160, 160, GRAY);
+    }
 
     char scoreLine[32] = "SCORE: ";
     char sscore[8];
@@ -455,10 +485,17 @@ void DrawGame(void) {
       }
     }
     DrawRectangleRec(playAgainRec, SKYBLUE);
-    DrawText("PLAY AGAIN",
-             playAgainRec.x +
-                 (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
-             playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
+    if (stage < STAGE_NUM) {
+      DrawText("NEXT STAGE",
+               playAgainRec.x +
+               (playAgainRec.width - MeasureText("NEXT STAGE", 60)) / 2,
+               playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
+    } else {
+      DrawText("PLAY AGAIN",
+               playAgainRec.x +
+               (playAgainRec.width - MeasureText("PLAY AGAIN", 60)) / 2,
+               playAgainRec.y + (playAgainRec.height - 60) / 2, 60, BLUE);
+    }
     break;
   }
   default:
