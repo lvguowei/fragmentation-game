@@ -15,6 +15,9 @@
 #define DURATION 30
 #define LINES_OF_BRICKS 30
 #define BRICKS_PER_LINE 20
+#define TITLE_GRID_ROWS 20
+#define TITLE_GRID_COLS 30
+#define TITLE_COLOR_NUM 6
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_LEFT 300
@@ -60,7 +63,12 @@ static Color timerColorAlarm;
 
 static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
                                             ORANGE};
+static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
+    (Color){147, 58, 22, 180}, (Color){141, 2, 31, 180},
+    (Color){94, 25, 20, 180},  (Color){184, 15, 10, 180},
+    (Color){66, 13, 9, 180},   (Color){255, 40, 0, 180}};
 
+static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
 static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE] = {0};
 static Vector2 brickSize = {0};
 static int targetX = 0;
@@ -108,7 +116,7 @@ int main(void) {
   bgMusic = LoadMusicStream("resources/bg.mp3");
   endingMusic = LoadMusicStream("resources/ending.mp3");
   InitGame();
-  //ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
 
 #if defined(PLATFORM_WEB)
@@ -128,6 +136,14 @@ int main(void) {
 //------------------------------------------------------------------------------------
 // Module Functions Definitions (local)
 //------------------------------------------------------------------------------------
+
+void UpdateTitleGridColors() {
+  for (int i = 0; i < TITLE_GRID_ROWS; i++) {
+    for (int j = 0; j < TITLE_GRID_COLS; j++) {
+      titleColors[i][j] = TITLE_COLORS[rand() % TITLE_COLOR_NUM];
+    }
+  }
+}
 
 // Initialize game variables
 void InitGame(void) {
@@ -158,10 +174,13 @@ void InitGame(void) {
     fragmentationLevel = 10;
   }
 
+  UpdateTitleGridColors();
+
   // Calculate Brick size
   brickSize =
       (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / BRICKS_PER_LINE,
                 (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / LINES_OF_BRICKS};
+  printf("%f, %f", brickSize.x, brickSize.y);
 
   // Select a random target brick
   targetX = rand() % BRICKS_PER_LINE;
@@ -259,6 +278,9 @@ void UpdateGame(void) {
 
   switch (currentScreen) {
   case TITLE: {
+    if (framesCount % 30 == 0) {
+      UpdateTitleGridColors();
+    }
     UpdateMusicStream(titleMusic);
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       Vector2 mousePos = GetMousePosition();
@@ -362,17 +384,30 @@ void DrawGame(void) {
 
   switch (currentScreen) {
   case TITLE: {
+    // Draw grid anim
+    int w = SCREEN_WIDTH / TITLE_GRID_COLS;
+    int h = SCREEN_HEIGHT / TITLE_GRID_ROWS;
+    for (int i = 0; i < TITLE_GRID_ROWS; i++) {
+      for (int j = 0; j < TITLE_GRID_COLS; j++) {
+        DrawRectangle(j * w, i * h, w, h, titleColors[i][j]);
+      }
+    }
+
+    int textX = (SCREEN_WIDTH - MeasureText("FRAGMENTATION GAME", 120)) / 2;
+    int textY = (SCREEN_HEIGHT - 120) / 2;
+
+    DrawRectangle(0, textY - 50, SCREEN_WIDTH, 120 + 50 * 2 , RED);
 
     // Game Title
     DrawText("FRAGMENTATION GAME",
-             SCREEN_WIDTH / 2 - MeasureText("FRAGMENTATION GAME", 120) / 2,
-             SCREEN_HEIGHT / 2 - 120, 120, RED);
+             textX,
+             textY, 120, RAYWHITE);
 
     // Touch to start
     if ((framesCount / 40) % 2 == 0) {
       DrawText("Touch Screen to Start",
                SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
-               SCREEN_HEIGHT / 2 - 80 + 300, 80, GRAY);
+               SCREEN_HEIGHT / 2 - 80 + 300, 80, BLANK);
     } else {
       DrawText("Touch Screen to Start",
                SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
@@ -380,13 +415,13 @@ void DrawGame(void) {
     }
 
     // Close button
-    DrawRectangleLinesEx(closeButtonRec, 5, LIGHTGRAY);
+    DrawRectangleLinesEx(closeButtonRec, 5, RAYWHITE);
     DrawLine(closeButtonRec.x, closeButtonRec.y,
              closeButtonRec.x + closeButtonRec.width,
-             closeButtonRec.y + closeButtonRec.height, LIGHTGRAY);
+             closeButtonRec.y + closeButtonRec.height, RAYWHITE);
     DrawLine(closeButtonRec.x, closeButtonRec.y + closeButtonRec.height,
              closeButtonRec.x + closeButtonRec.width, closeButtonRec.y,
-             LIGHTGRAY);
+             RAYWHITE);
     break;
   }
   case GAMEPLAY: {
@@ -520,7 +555,8 @@ void DrawGame(void) {
     break;
   }
 
-  DrawLineEx(cursorPos, (Vector2){cursorPos.x + 40, cursorPos.y + 40}, 8, BLACK);
+  DrawLineEx(cursorPos, (Vector2){cursorPos.x + 40, cursorPos.y + 40}, 8,
+             BLACK);
   DrawLineEx(cursorPos, (Vector2){cursorPos.x + 30, cursorPos.y}, 8, BLACK);
   DrawLineEx(cursorPos, (Vector2){cursorPos.x, cursorPos.y + 30}, 8, BLACK);
   EndDrawing();
