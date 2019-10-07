@@ -56,13 +56,13 @@ void DrawTitleScreen() {
     }
   }
 
-  int textX = (SCREEN_WIDTH - MeasureText("FRAGMENTATION GAME", 120)) / 2;
-  int textY = (SCREEN_HEIGHT - 120) / 2;
+  int textX = (SCREEN_WIDTH - MeasureText("FRAGMENTATION GAME", 140)) / 2;
+  int textY = (SCREEN_HEIGHT - 140) / 2 - 150;
 
-  DrawRectangle(0, textY - 50, SCREEN_WIDTH, 120 + 50 * 2, RED);
+  DrawRectangle(0, textY - 80, SCREEN_WIDTH, 140 + 80 * 2, RED);
 
   // Game Title
-  DrawText("FRAGMENTATION GAME", textX, textY, 120, RAYWHITE);
+  DrawText("FRAGMENTATION GAME", textX, textY, 140, RAYWHITE);
 
   // Touch to start
   if ((framesCount / 40) % 2 == 0) {

@@ -26,30 +26,28 @@ typedef struct Brick {
 static int framesCount;
 static bool finishScreen;
 
-bool pause = false;
-int baseTime = 0;
-int pauseTime = 0;
-int elapsedTime = 0;
+static bool pause = false;
+static int baseTime = 0;
+static int pauseTime = 0;
+static int elapsedTime = 0;
 
-Vector2 cursorPos = {0};
+static const Color TIMER_COLOR = GREEN;
+static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color timerColor = GREEN;
-static const Color timerColorAlarm = RED;
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK, ORANGE};
 
-const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK, ORANGE};
+static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
+static Vector2 brickSize = {0};
+static int targetX = 0;
+static int targetY = 0;
+static int fragmentationLevel = 3; // from 0 - 10
 
-Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE] = {0};
-Vector2 brickSize = {0};
-int targetX = 0;
-int targetY = 0;
-int fragmentationLevel = 3; // from 0 - 10
+static Sound clickSound;
+static Sound beepSound;
+static Music bgMusic;
 
-Sound clickSound;
-Sound beepSound;
-Music bgMusic;
-
-void chooseRandomBrick(int *x, int *y);
-void chooseNextTarget(int *nextX, int *nextY);
+static void chooseRandomBrick(int *x, int *y);
+static void chooseNextTarget(int *nextX, int *nextY);
 
 void InitGameplayScreen() {
   finishScreen = false;
@@ -58,7 +56,6 @@ void InitGameplayScreen() {
 
   clickSound = LoadSound("resources/click.mp3");
   beepSound = LoadSound("resources/beep.mp3");
-  
   bgMusic = LoadMusicStream("resources/bg.mp3");
   PlayMusicStream(bgMusic);
 
@@ -214,7 +211,7 @@ void DrawGameplayScreen() {
 
   // Draw countdown timer
   int timerLabelY = stageY + 250;
-  DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, timerColor);
+  DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, TIMER_COLOR);
 
   char stime[4];
   int t = DURATION - elapsedTime;
@@ -223,9 +220,9 @@ void DrawGameplayScreen() {
   sprintf(stime, "%d", t);
   Color textColor;
   if (elapsedTime >= DURATION - 5) {
-    textColor = timerColorAlarm;
+    textColor = TIMER_COLOR_ALARM;
   } else {
-    textColor = timerColor;
+    textColor = TIMER_COLOR;
   }
   int timerY = timerLabelY + LABEL_FONT_SIZE + 30;
   DrawText(stime, 10, timerY, TIMER_FONT_SIZE, textColor);
