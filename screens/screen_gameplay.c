@@ -189,13 +189,13 @@ void DrawGameplayScreen() {
   for (int i = 0; i <= LINES_OF_BRICKS; i++) {
     DrawLine(MARGIN_LEFT, MARGIN_TOP + i * brickSize.y,
              MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
-             MARGIN_TOP + i * brickSize.y, LIGHTGRAY);
+             MARGIN_TOP + i * brickSize.y, RAYWHITE);
   }
 
   for (int i = 0; i <= BRICKS_PER_LINE; i++) {
     DrawLine(MARGIN_LEFT + i * brickSize.x, MARGIN_TOP,
              MARGIN_LEFT + i * brickSize.x,
-             MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, LIGHTGRAY);
+             MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, RAYWHITE);
   }
 
   if (pause) {
