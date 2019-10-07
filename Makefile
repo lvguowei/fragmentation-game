@@ -24,7 +24,7 @@
 .PHONY: all clean
 
 # Define required raylib variables
-PROJECT_NAME       ?= fragmentation_game
+PROJECT_NAME       ?= game
 RAYLIB_VERSION     ?= 2.5.0
 RAYLIB_API_VERSION ?= 2
 RAYLIB_PATH        ?= /home/guowei/Documents/raylib
@@ -106,21 +106,15 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         RAYLIB_PATH    = $(realpath $(RAYLIB_PREFIX))
     endif
 endif
-# Default path for raylib on Raspberry Pi, if installed in different path, update it!
-# This is not currently used by src/Makefile. Not sure of its origin or usage. Refer to wiki.
-# TODO: update install: target in src/Makefile for RPI, consider relation to LINUX.
-ifeq ($(PLATFORM),PLATFORM_RPI)
-    RAYLIB_PATH       ?= /home/pi/raylib
-endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    EMSDK_PATH          ?= /home/guowei/Documents/emsdk
-    EMSCRIPTEN_VERSION  ?= 1.38.46
+    EMSDK_PATH          ?= C:/emsdk
+    EMSCRIPTEN_VERSION  ?= 1.38.31
     CLANG_VERSION       = e$(EMSCRIPTEN_VERSION)_64bit
-    #PYTHON_VERSION      = 2.7.13.1_64bit\python-2.7.13.amd64
+    PYTHON_VERSION      = 2.7.13.1_64bit\python-2.7.13.amd64
     NODE_VERSION        = 8.9.1_64bit
-    #export PATH         = $(EMSDK_PATH);$(EMSDK_PATH)\clang\$(CLANG_VERSION);$(EMSDK_PATH)\node\$(NODE_VERSION)\bin;$(EMSDK_PATH)\python\$(PYTHON_VERSION);$(EMSDK_PATH)\emscripten\$(EMSCRIPTEN_VERSION);C:\raylib\MinGW\bin:$$(PATH)
+    export PATH         = $(EMSDK_PATH);$(EMSDK_PATH)\clang\$(CLANG_VERSION);$(EMSDK_PATH)\node\$(NODE_VERSION)\bin;$(EMSDK_PATH)\python\$(PYTHON_VERSION);$(EMSDK_PATH)\emscripten\$(EMSCRIPTEN_VERSION);C:\raylib\MinGW\bin:$$(PATH)
     EMSCRIPTEN          = $(EMSDK_PATH)\emscripten\$(EMSCRIPTEN_VERSION)
 endif
 
@@ -171,7 +165,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Define default make program: Mingw32-make
-MAKE = make
+MAKE = mingw32-make
 
 ifeq ($(PLATFORM),PLATFORM_DESKTOP)
     ifeq ($(PLATFORM_OS),LINUX)
@@ -340,7 +334,11 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
 endif
 
 # Define all source files required
-PROJECT_SOURCE_FILES ?= game.c
+PROJECT_SOURCE_FILES ?= \
+    game.c \
+    screens/screen_title.c \
+    screens/screen_gameplay.c \
+    screens/screen_ending.c
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
