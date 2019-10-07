@@ -44,6 +44,7 @@ static int fragmentationLevel = 3; // from 0 - 10
 
 static Sound clickSound;
 static Sound beepSound;
+static Sound beepHighSound;
 static Music bgMusic;
 
 static void chooseRandomBrick(int *x, int *y);
@@ -56,6 +57,7 @@ void InitGameplayScreen() {
 
   clickSound = LoadSound("resources/click.mp3");
   beepSound = LoadSound("resources/beep.mp3");
+  beepHighSound = LoadSound("resources/beep_high.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
   PlayMusicStream(bgMusic);
 
@@ -123,7 +125,11 @@ void UpdateGameplayScreen() {
     } else {
       if (elapsedTime >= DURATION - 5 && elapsedTime <= DURATION) {
         if (elapsedTime == prevElapseTime + 1) {
-          PlaySound(beepSound);
+          if (elapsedTime == DURATION) {
+            PlaySound(beepHighSound);
+          }else {
+            PlaySound(beepSound);
+          }
         }
       }
 
@@ -241,6 +247,7 @@ void UnloadGameplayScreen() {
   UnloadMusicStream(bgMusic);
   UnloadSound(clickSound);
   UnloadSound(beepSound);
+  UnloadSound(beepHighSound);
 }
 
 bool FinishGameplayScreen() { return finishScreen; }
