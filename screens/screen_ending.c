@@ -11,6 +11,7 @@
 static int finishScreen;
 static int framesCount;
 static Music endingMusic;
+static Sound stageClearSound;
 
 static Rectangle playAgainRec;
 
@@ -21,6 +22,13 @@ void InitEndingScreen() {
       (Rectangle){SCREEN_WIDTH / 2 - 300,
                   SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
   endingMusic = LoadMusicStream("resources/ending.mp3");
+  stageClearSound = LoadSound("resources/clear.mp3");
+
+  if (stage == STAGE_NUM) {
+    PlayMusicStream(endingMusic);
+  } else {
+    PlaySound(stageClearSound);
+  }
 }
 
 void UpdateEndingScreen() {
@@ -78,8 +86,11 @@ void DrawEndingScreen() {
   }
 }
 
-void UnloadEndingScreen() { StopMusicStream(endingMusic);
+void UnloadEndingScreen() {
+  StopMusicStream(endingMusic);
+  StopSound(stageClearSound);
   UnloadMusicStream(endingMusic);
+  UnloadSound(stageClearSound);
 }
 
 int FinishEndingScreen() { return finishScreen; }

@@ -37,11 +37,6 @@ int main(void) {
         UnloadGameplayScreen();
         currentScreen = ENDING;
         InitEndingScreen();
-        if (stage == STAGE_NUM) {
-          //PlayMusicStream(endingMusic);
-        } else {
-          //PlaySound(stageClearSound);
-        }
         if (score > highestScore) {
           highestScore = score;
           prize = true;
@@ -62,6 +57,7 @@ int main(void) {
         InitTitleScreen();
         score = 0;
         stage = 1;
+        prize = false;
         break;
       }
       case 2: {

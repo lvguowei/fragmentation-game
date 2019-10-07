@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DURATION 10
-#define LINES_OF_BRICKS 30
+#define DURATION 30
+#define LINES_OF_BRICKS 15
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
 #define ALPHA 40
@@ -46,7 +46,6 @@ int fragmentationLevel = 3; // from 0 - 10
 
 Sound clickSound;
 Sound beepSound;
-Sound stageClearSound;
 Music bgMusic;
 
 void chooseRandomBrick(int *x, int *y);
@@ -59,7 +58,7 @@ void InitGameplayScreen() {
 
   clickSound = LoadSound("resources/click.mp3");
   beepSound = LoadSound("resources/beep.mp3");
-  stageClearSound = LoadSound("resources/clear.mp3");
+  
   bgMusic = LoadMusicStream("resources/bg.mp3");
   PlayMusicStream(bgMusic);
 
@@ -245,7 +244,6 @@ void UnloadGameplayScreen() {
   UnloadMusicStream(bgMusic);
   UnloadSound(clickSound);
   UnloadSound(beepSound);
-  UnloadSound(stageClearSound);
 }
 
 bool FinishGameplayScreen() { return finishScreen; }
