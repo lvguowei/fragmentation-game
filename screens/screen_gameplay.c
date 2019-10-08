@@ -8,10 +8,10 @@
 #define BRICKS_PER_LINE 20
 #define FILE_NUM 5
 #define ALPHA 40
-#define MARGIN_LEFT 300
-#define MARGIN_RIGHT 50
-#define MARGIN_TOP 50
-#define MARGIN_DOWN 50
+#define MARGIN_LEFT 400
+#define MARGIN_RIGHT 100
+#define MARGIN_TOP 100
+#define MARGIN_DOWN 100
 #define TIMER_FONT_SIZE 150
 #define SCORE_FONT_SIZE 150
 #define STAGE_FONT_SIZE 150
@@ -40,15 +40,17 @@ static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
 static Vector2 brickSize = {0};
 static int targetX = 0;
 static int targetY = 0;
-static int fragmentationLevel = 3; // from 0 - 10
+static int fragmentationLevel = 10; // from 0 - 100
 
 static Sound clickSound;
 static Sound beepSound;
 static Sound beepHighSound;
 static Music bgMusic;
+static Texture2D bgTexture;
 
 static void chooseRandomBrick(int *x, int *y);
 static void chooseNextTarget(int *nextX, int *nextY);
+
 
 void InitGameplayScreen() {
   finishScreen = false;
@@ -59,17 +61,18 @@ void InitGameplayScreen() {
   beepSound = LoadSound("resources/beep.mp3");
   beepHighSound = LoadSound("resources/beep_high.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
+  bgTexture = LoadTexture("resources/bg.png");
   PlayMusicStream(bgMusic);
 
   // Set fragmentationLevel based on stage
   if (stage == 1) {
-    fragmentationLevel = 2;
+    fragmentationLevel = 5;
   }
   if (stage == 2) {
-    fragmentationLevel = 4;
+    fragmentationLevel = 50;
   }
   if (stage == 3) {
-    fragmentationLevel = 10;
+    fragmentationLevel = 95;
   }
 
   // Calculate Brick size
@@ -90,7 +93,7 @@ void InitGameplayScreen() {
                     i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
 
       brick[i][j].active = false;
-      if (rand() % 10 <= 10 - fragmentationLevel) {
+      if (rand() % 100 <= 100 - fragmentationLevel) {
         brick[i][j].file = prevFile;
       } else {
         int file = rand() % FILE_NUM;
@@ -159,6 +162,8 @@ void UpdateGameplayScreen() {
 }
 
 void DrawGameplayScreen() {
+  // Draw background image
+  DrawTexture(bgTexture, 0, 0, WHITE);
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
       Color dark = FILE_COLORS[brick[i][j].file];
@@ -177,7 +182,7 @@ void DrawGameplayScreen() {
       } else {
         Color color;
         if (brick[i][j].active) {
-          color = RAYWHITE;
+          color = BLANK;
         } else {
           color = dark;
         }
@@ -248,6 +253,7 @@ void UnloadGameplayScreen() {
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
+  UnloadTexture(bgTexture);
 }
 
 bool FinishGameplayScreen() { return finishScreen; }

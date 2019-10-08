@@ -15,10 +15,11 @@ int main(void) {
   highestScore = 0;
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fragmentation Game");
+  Texture2D cursor = LoadTexture("resources/cursor.png");
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  //ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
   SetTargetFPS(60);
   while (!quit && !WindowShouldClose()) {
@@ -98,14 +99,12 @@ int main(void) {
 
     // Draw cursor
     Vector2 cursorPos = GetMousePosition();
-    DrawLineEx(cursorPos, (Vector2){cursorPos.x + 40, cursorPos.y + 40}, 8,
-               BLACK);
-    DrawLineEx(cursorPos, (Vector2){cursorPos.x + 30, cursorPos.y}, 8, BLACK);
-    DrawLineEx(cursorPos, (Vector2){cursorPos.x, cursorPos.y + 30}, 8, BLACK);
+    DrawTexture(cursor, cursorPos.x, cursorPos.y, WHITE);
     EndDrawing();
   }
 
   CloseAudioDevice();
+  //UnloadTexture(cursor);
   CloseWindow();
   return 0;
 }
