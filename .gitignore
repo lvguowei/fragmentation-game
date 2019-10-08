@@ -1,2 +1,4 @@
 *.o
+screens/*.o
 game
+
