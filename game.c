@@ -19,7 +19,7 @@ int main(void) {
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  ToggleFullscreen();
+  //ToggleFullscreen();
   HideCursor();
   SetTargetFPS(60);
   while (!quit && !WindowShouldClose()) {

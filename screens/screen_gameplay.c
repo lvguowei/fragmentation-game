@@ -34,7 +34,8 @@ static int elapsedTime = 0;
 static const Color TIMER_COLOR = GREEN;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK, ORANGE};
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
+                                            ORANGE};
 
 static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
 static Vector2 brickSize = {0};
@@ -46,11 +47,26 @@ static Sound clickSound;
 static Sound beepSound;
 static Sound beepHighSound;
 static Music bgMusic;
-static Texture2D bgTexture;
+static Texture2D bgTextureLayer1;
+static Texture2D bgTextureLayer2;
+static Texture2D bgTextureLayer3;
+static Texture2D bgTextureLayer4;
+static Texture2D bgTextureLayer5;
+static Texture2D bgTextureLayer6;
+static Texture2D bgTextureLayer7;
+static Texture2D bgTextureLayer8;
+
+float scrollingLayer1 = 0.0f;
+float scrollingLayer2 = 0.0f;
+float scrollingLayer3 = 0.0f;
+float scrollingLayer4 = 0.0f;
+float scrollingLayer5 = 0.0f;
+float scrollingLayer6 = 0.0f;
+float scrollingLayer7 = 0.0f;
+float scrollingLayer8 = 0.0f;
 
 static void chooseRandomBrick(int *x, int *y);
 static void chooseNextTarget(int *nextX, int *nextY);
-
 
 void InitGameplayScreen() {
   finishScreen = false;
@@ -61,7 +77,15 @@ void InitGameplayScreen() {
   beepSound = LoadSound("resources/beep.mp3");
   beepHighSound = LoadSound("resources/beep_high.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
-  bgTexture = LoadTexture("resources/bg.png");
+  bgTextureLayer1 = LoadTexture("resources/layer1.png");
+  bgTextureLayer2 = LoadTexture("resources/layer2.png");
+  bgTextureLayer3 = LoadTexture("resources/layer3.png");
+  bgTextureLayer4 = LoadTexture("resources/layer4.png");
+  bgTextureLayer5 = LoadTexture("resources/layer5.png");
+  bgTextureLayer6 = LoadTexture("resources/layer6.png");
+  bgTextureLayer7 = LoadTexture("resources/layer7.png");
+  bgTextureLayer8 = LoadTexture("resources/layer8.png");
+
   PlayMusicStream(bgMusic);
 
   // Set fragmentationLevel based on stage
@@ -107,6 +131,33 @@ void InitGameplayScreen() {
 void UpdateGameplayScreen() {
   framesCount++;
   UpdateMusicStream(bgMusic);
+
+  scrollingLayer1 -= 0.5f;
+  scrollingLayer2 -= 1.0f;
+  scrollingLayer3 -= 1.5f;
+  scrollingLayer4 -= 2.0f;
+  scrollingLayer5 -= 2.5f;
+  scrollingLayer6 -= 3.0f;
+  scrollingLayer7 -= 3.5f;
+  scrollingLayer8 -= 4.0f;
+
+  if (scrollingLayer1 <= -bgTextureLayer1.width)
+    scrollingLayer1 = 0;
+  if (scrollingLayer2 <= -bgTextureLayer2.width)
+    scrollingLayer2 = 0;
+  if (scrollingLayer3 <= -bgTextureLayer3.width)
+    scrollingLayer3 = 0;
+  if (scrollingLayer4 <= -bgTextureLayer4.width)
+    scrollingLayer4 = 0;
+  if (scrollingLayer5 <= -bgTextureLayer5.width)
+    scrollingLayer5 = 0;
+  if (scrollingLayer6 <= -bgTextureLayer6.width)
+    scrollingLayer6 = 0;
+  if (scrollingLayer7 <= -bgTextureLayer7.width)
+    scrollingLayer7 = 0;
+  if (scrollingLayer8 <= -bgTextureLayer8.width)
+    scrollingLayer8 = 0;
+
   if (IsKeyPressed(KEY_P)) {
     // Reset baseTime when unpause game
     if (pause) {
@@ -130,7 +181,7 @@ void UpdateGameplayScreen() {
         if (elapsedTime == prevElapseTime + 1) {
           if (elapsedTime == DURATION) {
             PlaySound(beepHighSound);
-          }else {
+          } else {
             PlaySound(beepSound);
           }
         }
@@ -163,7 +214,54 @@ void UpdateGameplayScreen() {
 
 void DrawGameplayScreen() {
   // Draw background image
-  DrawTexture(bgTexture, 0, 0, WHITE);
+  DrawTextureEx(bgTextureLayer1, (Vector2){scrollingLayer1, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer1,
+                (Vector2){bgTextureLayer1.width + scrollingLayer1, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer2, (Vector2){scrollingLayer2, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer2,
+                (Vector2){bgTextureLayer2.width + scrollingLayer2, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer3, (Vector2){scrollingLayer3, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer3,
+                (Vector2){bgTextureLayer3.width + scrollingLayer3, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer4, (Vector2){scrollingLayer4, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer4,
+                (Vector2){bgTextureLayer4.width + scrollingLayer4, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer5, (Vector2){scrollingLayer5, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer5,
+                (Vector2){bgTextureLayer5.width + scrollingLayer5, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer6, (Vector2){scrollingLayer6, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer6,
+                (Vector2){bgTextureLayer6.width + scrollingLayer6, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer7, (Vector2){scrollingLayer7, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer7,
+                (Vector2){bgTextureLayer7.width + scrollingLayer7, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer8, (Vector2){scrollingLayer8, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer8,
+                (Vector2){bgTextureLayer8.width + scrollingLayer8, 0}, 0.0f,
+                1.0f, WHITE);
+
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
       Color dark = FILE_COLORS[brick[i][j].file];
@@ -253,7 +351,14 @@ void UnloadGameplayScreen() {
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
-  UnloadTexture(bgTexture);
+  UnloadTexture(bgTextureLayer1);
+  UnloadTexture(bgTextureLayer2);
+  UnloadTexture(bgTextureLayer3);
+  UnloadTexture(bgTextureLayer4);
+  UnloadTexture(bgTextureLayer5);
+  UnloadTexture(bgTextureLayer6);
+  UnloadTexture(bgTextureLayer7);
+  UnloadTexture(bgTextureLayer8);
 }
 
 bool FinishGameplayScreen() { return finishScreen; }
