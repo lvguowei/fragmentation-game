@@ -68,6 +68,11 @@ float scrollingLayer8 = 0.0f;
 static void chooseRandomBrick(int *x, int *y);
 static void chooseNextTarget(int *nextX, int *nextY);
 
+static void InitBackground();
+static void UpdateBackground();
+static void DrawBackground();
+static void UnloadBackground();
+
 void InitGameplayScreen() {
   finishScreen = false;
   framesCount = 0;
@@ -77,15 +82,7 @@ void InitGameplayScreen() {
   beepSound = LoadSound("resources/beep.mp3");
   beepHighSound = LoadSound("resources/beep_high.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
-  bgTextureLayer1 = LoadTexture("resources/layer1.png");
-  bgTextureLayer2 = LoadTexture("resources/layer2.png");
-  bgTextureLayer3 = LoadTexture("resources/layer3.png");
-  bgTextureLayer4 = LoadTexture("resources/layer4.png");
-  bgTextureLayer5 = LoadTexture("resources/layer5.png");
-  bgTextureLayer6 = LoadTexture("resources/layer6.png");
-  bgTextureLayer7 = LoadTexture("resources/layer7.png");
-  bgTextureLayer8 = LoadTexture("resources/layer8.png");
-
+  InitBackground();
   PlayMusicStream(bgMusic);
 
   // Set fragmentationLevel based on stage
@@ -132,31 +129,7 @@ void UpdateGameplayScreen() {
   framesCount++;
   UpdateMusicStream(bgMusic);
 
-  scrollingLayer1 -= 0.5f;
-  scrollingLayer2 -= 1.0f;
-  scrollingLayer3 -= 1.5f;
-  scrollingLayer4 -= 2.0f;
-  scrollingLayer5 -= 2.5f;
-  scrollingLayer6 -= 3.0f;
-  scrollingLayer7 -= 3.5f;
-  scrollingLayer8 -= 4.0f;
-
-  if (scrollingLayer1 <= -bgTextureLayer1.width)
-    scrollingLayer1 = 0;
-  if (scrollingLayer2 <= -bgTextureLayer2.width)
-    scrollingLayer2 = 0;
-  if (scrollingLayer3 <= -bgTextureLayer3.width)
-    scrollingLayer3 = 0;
-  if (scrollingLayer4 <= -bgTextureLayer4.width)
-    scrollingLayer4 = 0;
-  if (scrollingLayer5 <= -bgTextureLayer5.width)
-    scrollingLayer5 = 0;
-  if (scrollingLayer6 <= -bgTextureLayer6.width)
-    scrollingLayer6 = 0;
-  if (scrollingLayer7 <= -bgTextureLayer7.width)
-    scrollingLayer7 = 0;
-  if (scrollingLayer8 <= -bgTextureLayer8.width)
-    scrollingLayer8 = 0;
+  UpdateBackground();
 
   if (IsKeyPressed(KEY_P)) {
     // Reset baseTime when unpause game
@@ -214,53 +187,7 @@ void UpdateGameplayScreen() {
 
 void DrawGameplayScreen() {
   // Draw background image
-  DrawTextureEx(bgTextureLayer1, (Vector2){scrollingLayer1, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer1,
-                (Vector2){bgTextureLayer1.width + scrollingLayer1, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer2, (Vector2){scrollingLayer2, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer2,
-                (Vector2){bgTextureLayer2.width + scrollingLayer2, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer3, (Vector2){scrollingLayer3, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer3,
-                (Vector2){bgTextureLayer3.width + scrollingLayer3, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer4, (Vector2){scrollingLayer4, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer4,
-                (Vector2){bgTextureLayer4.width + scrollingLayer4, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer5, (Vector2){scrollingLayer5, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer5,
-                (Vector2){bgTextureLayer5.width + scrollingLayer5, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer6, (Vector2){scrollingLayer6, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer6,
-                (Vector2){bgTextureLayer6.width + scrollingLayer6, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer7, (Vector2){scrollingLayer7, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer7,
-                (Vector2){bgTextureLayer7.width + scrollingLayer7, 0}, 0.0f,
-                1.0f, WHITE);
-
-  DrawTextureEx(bgTextureLayer8, (Vector2){scrollingLayer8, 0}, 0.0f, 1.0f,
-                WHITE);
-  DrawTextureEx(bgTextureLayer8,
-                (Vector2){bgTextureLayer8.width + scrollingLayer8, 0}, 0.0f,
-                1.0f, WHITE);
+  DrawBackground();
 
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
@@ -351,14 +278,7 @@ void UnloadGameplayScreen() {
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
-  UnloadTexture(bgTextureLayer1);
-  UnloadTexture(bgTextureLayer2);
-  UnloadTexture(bgTextureLayer3);
-  UnloadTexture(bgTextureLayer4);
-  UnloadTexture(bgTextureLayer5);
-  UnloadTexture(bgTextureLayer6);
-  UnloadTexture(bgTextureLayer7);
-  UnloadTexture(bgTextureLayer8);
+  UnloadBackground();
 }
 
 bool FinishGameplayScreen() { return finishScreen; }
@@ -394,4 +314,104 @@ void chooseNextTarget(int *nextX, int *nextY) {
       chooseRandomBrick(nextX, nextY);
     }
   }
+}
+
+void InitBackground() {
+  bgTextureLayer1 = LoadTexture("resources/layer1.png");
+  bgTextureLayer2 = LoadTexture("resources/layer2.png");
+  bgTextureLayer3 = LoadTexture("resources/layer3.png");
+  bgTextureLayer4 = LoadTexture("resources/layer4.png");
+  bgTextureLayer5 = LoadTexture("resources/layer5.png");
+  bgTextureLayer6 = LoadTexture("resources/layer6.png");
+  bgTextureLayer7 = LoadTexture("resources/layer7.png");
+  bgTextureLayer8 = LoadTexture("resources/layer8.png");
+}
+
+void UpdateBackground() {
+  scrollingLayer1 -= 0.5f;
+  scrollingLayer2 -= 1.0f;
+  scrollingLayer3 -= 1.5f;
+  scrollingLayer4 -= 2.0f;
+  scrollingLayer5 -= 2.5f;
+  scrollingLayer6 -= 3.0f;
+  scrollingLayer7 -= 3.5f;
+  scrollingLayer8 -= 4.0f;
+
+  if (scrollingLayer1 <= -bgTextureLayer1.width)
+    scrollingLayer1 = 0;
+  if (scrollingLayer2 <= -bgTextureLayer2.width)
+    scrollingLayer2 = 0;
+  if (scrollingLayer3 <= -bgTextureLayer3.width)
+    scrollingLayer3 = 0;
+  if (scrollingLayer4 <= -bgTextureLayer4.width)
+    scrollingLayer4 = 0;
+  if (scrollingLayer5 <= -bgTextureLayer5.width)
+    scrollingLayer5 = 0;
+  if (scrollingLayer6 <= -bgTextureLayer6.width)
+    scrollingLayer6 = 0;
+  if (scrollingLayer7 <= -bgTextureLayer7.width)
+    scrollingLayer7 = 0;
+  if (scrollingLayer8 <= -bgTextureLayer8.width)
+    scrollingLayer8 = 0;
+}
+
+void DrawBackground() {
+  DrawTextureEx(bgTextureLayer1, (Vector2){scrollingLayer1, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer1,
+                (Vector2){bgTextureLayer1.width + scrollingLayer1, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer2, (Vector2){scrollingLayer2, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer2,
+                (Vector2){bgTextureLayer2.width + scrollingLayer2, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer3, (Vector2){scrollingLayer3, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer3,
+                (Vector2){bgTextureLayer3.width + scrollingLayer3, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer4, (Vector2){scrollingLayer4, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer4,
+                (Vector2){bgTextureLayer4.width + scrollingLayer4, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer5, (Vector2){scrollingLayer5, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer5,
+                (Vector2){bgTextureLayer5.width + scrollingLayer5, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer6, (Vector2){scrollingLayer6, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer6,
+                (Vector2){bgTextureLayer6.width + scrollingLayer6, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer7, (Vector2){scrollingLayer7, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer7,
+                (Vector2){bgTextureLayer7.width + scrollingLayer7, 0}, 0.0f,
+                1.0f, WHITE);
+
+  DrawTextureEx(bgTextureLayer8, (Vector2){scrollingLayer8, 0}, 0.0f, 1.0f,
+                WHITE);
+  DrawTextureEx(bgTextureLayer8,
+                (Vector2){bgTextureLayer8.width + scrollingLayer8, 0}, 0.0f,
+                1.0f, WHITE);
+}
+
+void UnloadBackground() {
+  UnloadTexture(bgTextureLayer1);
+  UnloadTexture(bgTextureLayer2);
+  UnloadTexture(bgTextureLayer3);
+  UnloadTexture(bgTextureLayer4);
+  UnloadTexture(bgTextureLayer5);
+  UnloadTexture(bgTextureLayer6);
+  UnloadTexture(bgTextureLayer7);
+  UnloadTexture(bgTextureLayer8);
 }

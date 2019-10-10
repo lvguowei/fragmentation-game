@@ -65,7 +65,7 @@ void DrawEndingScreen() {
   DrawText(scoreLine, SCREEN_WIDTH / 2 - MeasureText(scoreLine, 100) / 2,
            SCREEN_HEIGHT / 2 - 200 - 160 + 200, 100, GRAY);
 
-  if (prize) {
+  if (prize && stage == STAGE_NUM) {
     if ((framesCount / 40) % 2 == 0) {
       DrawText("NEW RECORD",
                SCREEN_WIDTH / 2 - MeasureText("NEW RECORD", 100) / 2,
