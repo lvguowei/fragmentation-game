@@ -47,7 +47,9 @@ static int fragmentationLevel = 10; // from 0 - 100
 static Sound clickSound;
 static Sound beepSound;
 static Sound beepHighSound;
-static Music bgMusic;
+static Music stage1Music;
+static Music stage2Music;
+static Music stage3Music;
 
 static void chooseRandomBrick(int *x, int *y);
 static void chooseNextTarget(int *nextX, int *nextY);
@@ -60,17 +62,20 @@ void InitGameplayScreen() {
   clickSound = LoadSound("resources/sounds/click.mp3");
   beepSound = LoadSound("resources/sounds/beep.mp3");
   beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
-  bgMusic = LoadMusicStream("resources/music/bg.mp3");
 
   if (stage == 1) {
     InitStage1Background();
+    stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
+    PlayMusicStream(stage1Music);
   } else if (stage == 2) {
     InitStage2Background();
+    stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
+    PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     InitStage3Background();
+    stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
+    PlayMusicStream(stage3Music);
   }
-
-  PlayMusicStream(bgMusic);
 
   // Set fragmentationLevel based on stage
   if (stage == 1) {
@@ -114,14 +119,16 @@ void InitGameplayScreen() {
 
 void UpdateGameplayScreen() {
   framesCount++;
-  UpdateMusicStream(bgMusic);
 
   if (stage == 1) {
     UpdateStage1Background();
+    UpdateMusicStream(stage1Music);
   } else if (stage == 2) {
     UpdateStage2Background();
+    UpdateMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     UpdateStage3Background();
+    UpdateMusicStream(stage3Music);
   }
 
   if (IsKeyPressed(KEY_P)) {
@@ -272,17 +279,21 @@ void DrawGameplayScreen() {
 }
 
 void UnloadGameplayScreen() {
-  StopMusicStream(bgMusic);
-  UnloadMusicStream(bgMusic);
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
   if (stage == 1) {
     UnloadStage1Background();
+    StopMusicStream(stage1Music);
+    UnloadMusicStream(stage1Music);
   } else if (stage == 2) {
     UnloadStage2Background();
+    StopMusicStream(stage2Music);
+    UnloadMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     UnloadStage3Background();
+    StopMusicStream(stage3Music);
+    UnloadMusicStream(stage3Music);
   }
 }
 
