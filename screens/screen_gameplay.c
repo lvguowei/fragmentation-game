@@ -6,7 +6,7 @@
 
 #define DURATION 30
 #define LINES_OF_BRICKS 15
-#define BRICKS_PER_LINE 20
+#define BRICKS_PER_LINE 15
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_LEFT 400
@@ -82,10 +82,10 @@ void InitGameplayScreen() {
     fragmentationLevel = 5;
   }
   if (stage == 2) {
-    fragmentationLevel = 50;
+    fragmentationLevel = 15;
   }
   if (stage == 3) {
-    fragmentationLevel = 95;
+    fragmentationLevel = 100;
   }
 
   // Calculate Brick size
@@ -226,15 +226,11 @@ void DrawGameplayScreen() {
 
   // Draw grid
   for (int i = 0; i <= LINES_OF_BRICKS; i++) {
-    DrawLine(MARGIN_LEFT, MARGIN_TOP + i * brickSize.y,
-             MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
-             MARGIN_TOP + i * brickSize.y, RAYWHITE);
+    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y}, (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,MARGIN_TOP + i * brickSize.y}, 10, LIGHTGRAY);
   }
 
   for (int i = 0; i <= BRICKS_PER_LINE; i++) {
-    DrawLine(MARGIN_LEFT + i * brickSize.x, MARGIN_TOP,
-             MARGIN_LEFT + i * brickSize.x,
-             MARGIN_TOP + LINES_OF_BRICKS * brickSize.y, RAYWHITE);
+    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP}, (Vector2) {MARGIN_LEFT + i * brickSize.x, MARGIN_TOP + LINES_OF_BRICKS * brickSize.y}, 10, LIGHTGRAY);
   }
 
   if (pause) {
