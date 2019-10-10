@@ -1,6 +1,6 @@
+#include "backgrounds.h"
 #include "raylib.h"
 #include "screens.h"
-#include "backgrounds.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -61,7 +61,15 @@ void InitGameplayScreen() {
   beepSound = LoadSound("resources/beep.mp3");
   beepHighSound = LoadSound("resources/beep_high.mp3");
   bgMusic = LoadMusicStream("resources/bg.mp3");
-  InitStage1Background();
+
+  if (stage == 1) {
+    InitStage1Background();
+  } else if (stage == 2) {
+    InitStage2Background();
+  } else if (stage == STAGE_NUM) {
+    InitStage3Background();
+  }
+
   PlayMusicStream(bgMusic);
 
   // Set fragmentationLevel based on stage
@@ -108,7 +116,13 @@ void UpdateGameplayScreen() {
   framesCount++;
   UpdateMusicStream(bgMusic);
 
-  UpdateStage1Background();
+  if (stage == 1) {
+    UpdateStage1Background();
+  } else if (stage == 2) {
+    UpdateStage2Background();
+  } else if (stage == STAGE_NUM) {
+    UpdateStage3Background();
+  }
 
   if (IsKeyPressed(KEY_P)) {
     // Reset baseTime when unpause game
@@ -165,7 +179,15 @@ void UpdateGameplayScreen() {
 }
 
 void DrawGameplayScreen() {
-  DrawStage1Background();
+  if (stage == 1) {
+    DrawStage1Background();
+  } else if (stage == 2) {
+    DrawStage2Background();
+  } else if (stage == STAGE_NUM) {
+    DrawStage3Background();
+  }
+
+  // Draw bricks
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
       Color dark = FILE_COLORS[brick[i][j].file];
@@ -255,7 +277,13 @@ void UnloadGameplayScreen() {
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
-  UnloadStage1Background();
+  if (stage == 1) {
+    UnloadStage1Background();
+  } else if (stage == 2) {
+    UnloadStage2Background();
+  } else if (stage == STAGE_NUM) {
+    UnloadStage3Background();
+  }
 }
 
 bool FinishGameplayScreen() { return finishScreen; }
@@ -292,4 +320,3 @@ void chooseNextTarget(int *nextX, int *nextY) {
     }
   }
 }
-
