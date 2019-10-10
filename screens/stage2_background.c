@@ -31,14 +31,14 @@ void InitStage2Background() {
 }
 
 void UpdateStage2Background() {
-  scrollingLayer1 -= 0.5f;
-  scrollingLayer2 -= 1.0f;
-  scrollingLayer3 -= 1.5f;
-  scrollingLayer4 -= 2.0f;
-  scrollingLayer5 -= 2.5f;
-  scrollingLayer6 -= 3.0f;
-  scrollingLayer7 -= 3.5f;
-  scrollingLayer8 -= 4.0f;
+  scrollingLayer1 -= 0.2f;
+  scrollingLayer2 -= 0.4f;
+  scrollingLayer3 -= 0.6f;
+  scrollingLayer4 -= 0.8f;
+  scrollingLayer5 -= 1.0f;
+  scrollingLayer6 -= 1.2f;
+  scrollingLayer7 -= 1.4f;
+  scrollingLayer8 -= 1.6f;
 
   if (scrollingLayer1 <= -bgTextureLayer1.width)
     scrollingLayer1 = 0;
@@ -60,52 +60,52 @@ void UpdateStage2Background() {
 
 void DrawStage2Background() {
   DrawTextureEx(bgTextureLayer1, (Vector2){scrollingLayer1, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer1,
                 (Vector2){bgTextureLayer1.width + scrollingLayer1, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer2, (Vector2){scrollingLayer2, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer2,
                 (Vector2){bgTextureLayer2.width + scrollingLayer2, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer3, (Vector2){scrollingLayer3, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer3,
                 (Vector2){bgTextureLayer3.width + scrollingLayer3, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer4, (Vector2){scrollingLayer4, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer4,
                 (Vector2){bgTextureLayer4.width + scrollingLayer4, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer5, (Vector2){scrollingLayer5, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer5,
                 (Vector2){bgTextureLayer5.width + scrollingLayer5, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer6, (Vector2){scrollingLayer6, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer6,
                 (Vector2){bgTextureLayer6.width + scrollingLayer6, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer7, (Vector2){scrollingLayer7, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer7,
                 (Vector2){bgTextureLayer7.width + scrollingLayer7, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 
   DrawTextureEx(bgTextureLayer8, (Vector2){scrollingLayer8, 0}, 0.0f, 1.0f,
-                GRAY);
+                WHITE);
   DrawTextureEx(bgTextureLayer8,
                 (Vector2){bgTextureLayer8.width + scrollingLayer8, 0}, 0.0f,
-                1.0f, GRAY);
+                1.0f, WHITE);
 }
 
 void UnloadStage2Background() {

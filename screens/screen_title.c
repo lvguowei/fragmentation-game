@@ -25,7 +25,7 @@ void InitTitleScreen() {
   framesCount = 0;
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
   finishScreen = false;
-  titleMusic = LoadMusicStream("resources/title.mp3");
+  titleMusic = LoadMusicStream("resources/music/title.mp3");
   PlayMusicStream(titleMusic);
   UpdateTitleGridColors();
 }

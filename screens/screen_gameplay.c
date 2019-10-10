@@ -57,10 +57,10 @@ void InitGameplayScreen() {
   framesCount = 0;
   baseTime = GetTime();
 
-  clickSound = LoadSound("resources/click.mp3");
-  beepSound = LoadSound("resources/beep.mp3");
-  beepHighSound = LoadSound("resources/beep_high.mp3");
-  bgMusic = LoadMusicStream("resources/bg.mp3");
+  clickSound = LoadSound("resources/sounds/click.mp3");
+  beepSound = LoadSound("resources/sounds/beep.mp3");
+  beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
+  bgMusic = LoadMusicStream("resources/music/bg.mp3");
 
   if (stage == 1) {
     InitStage1Background();

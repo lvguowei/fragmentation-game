@@ -31,15 +31,15 @@ void InitStage1Background() {
 }
 
 void UpdateStage1Background() {
-  scrollingLayer1 -= 0.5f;
-  scrollingLayer2 -= 1.0f;
-  scrollingLayer3 -= 1.5f;
-  scrollingLayer4 -= 2.0f;
-  scrollingLayer5 -= 2.5f;
-  scrollingLayer6 -= 3.0f;
-  scrollingLayer7 -= 3.5f;
-  scrollingLayer8 -= 4.0f;
-
+  scrollingLayer1 -= 0.2f;
+  scrollingLayer2 -= 0.4f;
+  scrollingLayer3 -= 0.6f;
+  scrollingLayer4 -= 0.8f;
+  scrollingLayer5 -= 1.0f;
+  scrollingLayer6 -= 1.2f;
+  scrollingLayer7 -= 1.4f;
+  scrollingLayer8 -= 1.6f;
+  
   if (scrollingLayer1 <= -bgTextureLayer1.width)
     scrollingLayer1 = 0;
   if (scrollingLayer2 <= -bgTextureLayer2.width)

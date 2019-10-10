@@ -21,8 +21,8 @@ void InitEndingScreen() {
   playAgainRec =
       (Rectangle){SCREEN_WIDTH / 2 - 300,
                   SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
-  endingMusic = LoadMusicStream("resources/ending.mp3");
-  stageClearSound = LoadSound("resources/clear.mp3");
+  endingMusic = LoadMusicStream("resources/music/ending.mp3");
+  stageClearSound = LoadSound("resources/sounds/clear.mp3");
 
   if (stage == STAGE_NUM) {
     PlayMusicStream(endingMusic);
