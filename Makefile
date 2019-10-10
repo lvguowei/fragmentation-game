@@ -338,7 +338,10 @@ PROJECT_SOURCE_FILES ?= \
     game.c \
     screens/screen_title.c \
     screens/screen_gameplay.c \
-    screens/screen_ending.c
+    screens/screen_ending.c \
+		screens/stage1_background.c \
+    screens/stage2_background.c \
+    screens/stage3_background.c
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))
