@@ -1,5 +1,5 @@
-#include "raylib.h"
 #include "backgrounds.h"
+#include "raylib.h"
 
 static Texture2D bgTextureLayer1;
 static Texture2D bgTextureLayer2;
@@ -20,14 +20,14 @@ static float scrollingLayer7 = 0.0f;
 static float scrollingLayer8 = 0.0f;
 
 void InitStage1Background() {
-  bgTextureLayer1 = LoadTexture("resources/layer1.png");
-  bgTextureLayer2 = LoadTexture("resources/layer2.png");
-  bgTextureLayer3 = LoadTexture("resources/layer3.png");
-  bgTextureLayer4 = LoadTexture("resources/layer4.png");
-  bgTextureLayer5 = LoadTexture("resources/layer5.png");
-  bgTextureLayer6 = LoadTexture("resources/layer6.png");
-  bgTextureLayer7 = LoadTexture("resources/layer7.png");
-  bgTextureLayer8 = LoadTexture("resources/layer8.png");
+  bgTextureLayer1 = LoadTexture("resources/images/backgrounds/stage1/layer1.png");
+  bgTextureLayer2 = LoadTexture("resources/images/backgrounds/stage1/layer2.png");
+  bgTextureLayer3 = LoadTexture("resources/images/backgrounds/stage1/layer3.png");
+  bgTextureLayer4 = LoadTexture("resources/images/backgrounds/stage1/layer4.png");
+  bgTextureLayer5 = LoadTexture("resources/images/backgrounds/stage1/layer5.png");
+  bgTextureLayer6 = LoadTexture("resources/images/backgrounds/stage1/layer6.png");
+  bgTextureLayer7 = LoadTexture("resources/images/backgrounds/stage1/layer7.png");
+  bgTextureLayer8 = LoadTexture("resources/images/backgrounds/stage1/layer8.png");
 }
 
 void UpdateStage1Background() {
