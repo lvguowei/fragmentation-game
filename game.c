@@ -15,7 +15,7 @@ int main(void) {
   highestScore = 0;
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fragmentation Game");
-  Texture2D cursor = LoadTexture("resources/cursor.png");
+  Texture2D cursor = LoadTexture("resources/images/cursor.png");
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
