@@ -226,11 +226,11 @@ void DrawGameplayScreen() {
 
   // Draw grid
   for (int i = 0; i <= LINES_OF_BRICKS; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y}, (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,MARGIN_TOP + i * brickSize.y}, 10, LIGHTGRAY);
+    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y}, (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,MARGIN_TOP + i * brickSize.y}, 6, BLACK);
   }
 
   for (int i = 0; i <= BRICKS_PER_LINE; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP}, (Vector2) {MARGIN_LEFT + i * brickSize.x, MARGIN_TOP + LINES_OF_BRICKS * brickSize.y}, 10, LIGHTGRAY);
+    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP}, (Vector2) {MARGIN_LEFT + i * brickSize.x, MARGIN_TOP + LINES_OF_BRICKS * brickSize.y}, 6, BLACK);
   }
 
   if (pause) {
