@@ -25,7 +25,7 @@ static void UpdateAndDraw();
 
 int main(void) {
   srand(time(NULL));
-  stage = 1;
+  stage = 0;
   quit = false;
   prize = false;
   score = 0;
@@ -37,7 +37,7 @@ int main(void) {
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  ToggleFullscreen();
+  // ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -90,9 +90,13 @@ static void UpdateTransition(void) {
       // Load next screen
       switch (transToScreen) {
       case TITLE:
+        score = 0;
+        stage = 0;
+        prize = false;
         InitTitleScreen();
         break;
       case GAMEPLAY:
+        stage++;
         InitGameplayScreen();
         break;
       case ENDING:
@@ -109,20 +113,17 @@ static void UpdateTransition(void) {
     }
   } else // Transition fade out logic
   {
-    transAlpha -= 0.02f;
-
-    if (transAlpha < -0.01f) {
-      transAlpha = 0.0f;
-      transFadeOut = false;
-      onTransition = false;
-      transFromScreen = -1;
-      transToScreen = -1;
-    }
+    transAlpha = 0.0f;
+    transFadeOut = false;
+    onTransition = false;
+    transFromScreen = -1;
+    transToScreen = -1;
   }
 }
 
-static void DrawTransition(void){
-  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, transAlpha));
+static void DrawTransition(void) {
+  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(),
+                Fade(BLACK, transAlpha));
 }
 
 void UpdateAndDraw() {
@@ -153,14 +154,10 @@ void UpdateAndDraw() {
         break;
       }
       case 1: {
-        score = 0;
-        stage = 1;
-        prize = false;
         TransitionToScreen(TITLE);
         break;
       }
       case 2: {
-        stage++;
         TransitionToScreen(GAMEPLAY);
         break;
       }
@@ -178,6 +175,7 @@ void UpdateAndDraw() {
   }
 
   BeginDrawing();
+
   ClearBackground(RAYWHITE);
   switch (currentScreen) {
   case TITLE: {
@@ -197,7 +195,8 @@ void UpdateAndDraw() {
   }
 
   // Draw full screen rectangle
-  if (onTransition) DrawTransition();
+  if (onTransition)
+    DrawTransition();
 
   // Draw cursor
   Vector2 cursorPos = GetMousePosition();
