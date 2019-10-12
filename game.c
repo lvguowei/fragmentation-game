@@ -106,6 +106,14 @@ static void UpdateTransition(void) {
 
       currentScreen = transToScreen;
       onTransition = false;
+    } else {
+      switch (transFromScreen) {
+      case TITLE:
+        UpdateTitleScreen();
+        break;
+      default:
+        break;
+      }
     }
   } else
   {
