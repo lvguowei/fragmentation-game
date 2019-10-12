@@ -11,7 +11,17 @@
 
 static Texture2D cursor;
 
-void UpdateAndDraw();
+// Required variables to manage screen transitions (fade-in, fade-out)
+static float transAlpha = 0.0f;
+static bool onTransition = false;
+static bool transFadeOut = false;
+static int transFromScreen = -1;
+static int transToScreen = -1;
+static void TransitionToScreen(int screen);
+static void UpdateTransition(void);
+static void DrawTransition(void);
+
+static void UpdateAndDraw();
 
 int main(void) {
   srand(time(NULL));
@@ -44,60 +54,127 @@ int main(void) {
   return 0;
 }
 
-void UpdateAndDraw() {
-  switch (currentScreen) {
-  case TITLE: {
-    UpdateTitleScreen();
-    if (FinishTitleScreen()) {
-      UnloadTitleScreen();
-      currentScreen = GAMEPLAY;
-      InitGameplayScreen();
-    }
-    break;
-  case GAMEPLAY: {
-    UpdateGameplayScreen();
-    if (FinishGameplayScreen()) {
-      UnloadGameplayScreen();
-      currentScreen = ENDING;
-      InitEndingScreen();
-      if (score > highestScore) {
-        highestScore = score;
-        prize = true;
+static void TransitionToScreen(int screen) {
+  onTransition = true;
+  transFadeOut = false;
+  transFromScreen = currentScreen;
+  transToScreen = screen;
+  transAlpha = 0.0f;
+}
+
+static void UpdateTransition(void) {
+  if (!transFadeOut) {
+    transAlpha += 0.02f;
+
+    // NOTE: Due to float internal representation, condition jumps on 1.0f
+    // instead of 1.05f For that reason we compare against 1.01f, to avoid last
+    // frame loading stop
+    if (transAlpha > 1.01f) {
+      transAlpha = 1.0f;
+
+      // Unload current screen
+      switch (transFromScreen) {
+      case TITLE:
+        UnloadTitleScreen();
+        break;
+      case GAMEPLAY:
+        UnloadGameplayScreen();
+        break;
+      case ENDING:
+        UnloadEndingScreen();
+        break;
+      default:
+        break;
       }
+
+      // Load next screen
+      switch (transToScreen) {
+      case TITLE:
+        InitTitleScreen();
+        break;
+      case GAMEPLAY:
+        InitGameplayScreen();
+        break;
+      case ENDING:
+        InitEndingScreen();
+        break;
+      default:
+        break;
+      }
+
+      currentScreen = transToScreen;
+
+      // Activate fade out effect to next loaded screen
+      transFadeOut = true;
     }
-    break;
+  } else // Transition fade out logic
+  {
+    transAlpha -= 0.02f;
+
+    if (transAlpha < -0.01f) {
+      transAlpha = 0.0f;
+      transFadeOut = false;
+      onTransition = false;
+      transFromScreen = -1;
+      transToScreen = -1;
+    }
   }
-  case ENDING: {
-    UpdateEndingScreen();
-    switch (FinishEndingScreen()) {
-    case 0: {
-      // no finishing
+}
+
+static void DrawTransition(void){
+  DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, transAlpha));
+}
+
+void UpdateAndDraw() {
+  if (!onTransition) {
+    switch (currentScreen) {
+    case TITLE: {
+      UpdateTitleScreen();
+      if (FinishTitleScreen()) {
+        TransitionToScreen(GAMEPLAY);
+      }
+      break;
+    case GAMEPLAY: {
+      UpdateGameplayScreen();
+      if (FinishGameplayScreen()) {
+        if (score > highestScore) {
+          highestScore = score;
+          prize = true;
+        }
+        TransitionToScreen(ENDING);
+      }
       break;
     }
-    case 1: {
-      UnloadEndingScreen();
-      currentScreen = TITLE;
-      InitTitleScreen();
-      score = 0;
-      stage = 1;
-      prize = false;
+    case ENDING: {
+      UpdateEndingScreen();
+      switch (FinishEndingScreen()) {
+      case 0: {
+        // no finishing
+        break;
+      }
+      case 1: {
+        score = 0;
+        stage = 1;
+        prize = false;
+        TransitionToScreen(TITLE);
+        break;
+      }
+      case 2: {
+        stage++;
+        TransitionToScreen(GAMEPLAY);
+        break;
+      }
+      default:
+        break;
+      }
       break;
     }
-    case 2: {
-      stage++;
-      UnloadEndingScreen();
-      currentScreen = GAMEPLAY;
-      InitGameplayScreen();
-      break;
     }
     default:
       break;
     }
-    break;
-  }
-  }
-  default:
-    break;
+  } else {
+    UpdateTransition();
   }
 
   BeginDrawing();
@@ -118,6 +195,9 @@ void UpdateAndDraw() {
   default:
     break;
   }
+
+  // Draw full screen rectangle
+  if (onTransition) DrawTransition();
 
   // Draw cursor
   Vector2 cursorPos = GetMousePosition();

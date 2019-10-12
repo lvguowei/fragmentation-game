@@ -106,10 +106,22 @@ ifeq ($(PLATFORM),PLATFORM_DESKTOP)
         RAYLIB_PATH    = $(realpath $(RAYLIB_PREFIX))
     endif
 endif
+# Default path for raylib on Raspberry Pi, if installed in different path, update it!
+# This is not currently used by src/Makefile. Not sure of its origin or usage. Refer to wiki.
+# TODO: update install: target in src/Makefile for RPI, consider relation to LINUX.
+ifeq ($(PLATFORM),PLATFORM_RPI)
+    RAYLIB_PATH       ?= /home/pi/raylib
+endif
 
 ifeq ($(PLATFORM),PLATFORM_WEB)
     # Emscripten required variables
-    
+    # EMSDK_PATH          ?= C:/emsdk
+    # EMSCRIPTEN_VERSION  ?= 1.38.32
+    # CLANG_VERSION       = e$(EMSCRIPTEN_VERSION)_64bit
+    # PYTHON_VERSION      = 2.7.13.1_64bit\python-2.7.13.amd64
+    # NODE_VERSION        = 8.9.1_64bit
+    # export PATH         = $(EMSDK_PATH);$(EMSDK_PATH)\clang\$(CLANG_VERSION);$(EMSDK_PATH)\node\$(NODE_VERSION)\bin;$(EMSDK_PATH)\python\$(PYTHON_VERSION);$(EMSDK_PATH)\emscripten\$(EMSCRIPTEN_VERSION);C:\raylib\MinGW\bin:$$(PATH)
+    # EMSCRIPTEN          = $(EMSDK_PATH)\emscripten\$(EMSCRIPTEN_VERSION)
 endif
 
 # Define raylib release directory for compiled library.
@@ -155,7 +167,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # HTML5 emscripten compiler
     # WARNING: To compile to HTML5, code must be redesigned 
     # to use emscripten.h and emscripten_set_main_loop()
-    CC = emcc
+    CC = /home/guowei/Documents/emsdk/fastcomp/emscripten/emcc
 endif
 
 # Define default make program: Mingw32-make
@@ -218,7 +230,7 @@ ifeq ($(PLATFORM),PLATFORM_WEB)
     # --profiling                # include information for code profiling
     # --memory-init-file 0       # to avoid an external memory initialization code file (.mem)
     # --preload-file resources   # specify a resources folder for data compilation
-    CFLAGS += -Os -s USE_GLFW=3 -s TOTAL_MEMORY=16777216 --preload-file resources
+    CFLAGS += -Os -s USE_GLFW=3 -s TOTAL_MEMORY=67108864 --preload-file resources
     ifeq ($(BUILD_MODE), DEBUG)
         CFLAGS += -s ASSERTIONS=1 --profiling
     endif
