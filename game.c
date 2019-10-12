@@ -14,7 +14,6 @@ static Texture2D cursor;
 // Required variables to manage screen transitions (fade-in, fade-out)
 static float transAlpha = 0.0f;
 static bool onTransition = false;
-static bool transFadeOut = false;
 static int transFromScreen = -1;
 static int transToScreen = -1;
 static void TransitionToScreen(int screen);
@@ -56,14 +55,13 @@ int main(void) {
 
 static void TransitionToScreen(int screen) {
   onTransition = true;
-  transFadeOut = false;
   transFromScreen = currentScreen;
   transToScreen = screen;
   transAlpha = 0.0f;
 }
 
 static void UpdateTransition(void) {
-  if (!transFadeOut) {
+  if (onTransition) {
     transAlpha += 0.02f;
 
     // NOTE: Due to float internal representation, condition jumps on 1.0f
@@ -107,15 +105,11 @@ static void UpdateTransition(void) {
       }
 
       currentScreen = transToScreen;
-
-      // Activate fade out effect to next loaded screen
-      transFadeOut = true;
+      onTransition = false;
     }
-  } else // Transition fade out logic
+  } else
   {
     transAlpha = 0.0f;
-    transFadeOut = false;
-    onTransition = false;
     transFromScreen = -1;
     transToScreen = -1;
   }
