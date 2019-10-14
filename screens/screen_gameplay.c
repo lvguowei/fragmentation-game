@@ -66,17 +66,17 @@ void InitGameplayScreen() {
   if (stage == 1) {
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
-    SetMusicVolume(stage1Music, 0.5f);
+    SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
   } else if (stage == 2) {
     InitStage2Background();
     stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
-    SetMusicVolume(stage2Music, 0.5f);
+    SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     InitStage3Background();
     stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
-    SetMusicVolume(stage3Music, 0.5f);
+    SetMusicVolume(stage3Music, 1.0f);
     PlayMusicStream(stage3Music);
   }
 

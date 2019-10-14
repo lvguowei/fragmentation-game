@@ -3,14 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 
-/* 0 - Not finish
-   1 - Go to title screen
-   2 - Go to play screen
- */
-static int finishScreen;
+static bool finishScreen;
 static int framesCount;
-static Sound endingSound;
-static Sound stageClearSound;
+static Music endingMusic;
 
 static Rectangle playAgainRec;
 
@@ -20,18 +15,14 @@ void InitEndingScreen() {
   playAgainRec =
       (Rectangle){SCREEN_WIDTH / 2 - 300,
                   SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
-  endingSound = LoadSound("resources/sounds/ending.mp3");
-  stageClearSound = LoadSound("resources/sounds/clear.mp3");
+  endingMusic = LoadMusicStream("resources/music/ending.mp3");
+  PlayMusicStream(endingMusic);
 
-  if (stage == STAGE_NUM) {
-    PlaySound(endingSound);
-  } else {
-    PlaySound(stageClearSound);
-  }
 }
 
 void UpdateEndingScreen() {
   framesCount++;
+  UpdateMusicStream(endingMusic);
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     Vector2 mousePos = GetMousePosition();
     if (CheckCollisionPointRec(mousePos, playAgainRec)) {
@@ -79,10 +70,8 @@ void DrawEndingScreen() {
 }
 
 void UnloadEndingScreen() {
-  StopSound(endingSound);
-  StopSound(stageClearSound);
-  UnloadSound(stageClearSound);
-  UnloadSound(endingSound);
+  StopMusicStream(endingMusic);
+  UnloadMusicStream(endingMusic);
 }
 
 bool FinishEndingScreen() { return finishScreen; }

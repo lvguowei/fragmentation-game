@@ -212,8 +212,13 @@ void UpdateAndDraw() {
   if (onTransition)
     DrawTransition();
 
+#if defined(PLATFORM_WEB)
+    // Do not draw cursor in web
+#else
   // Draw cursor
   Vector2 cursorPos = GetMousePosition();
   DrawTexture(cursor, cursorPos.x, cursorPos.y, WHITE);
+#endif
+
   EndDrawing();
 }
