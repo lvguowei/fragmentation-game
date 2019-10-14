@@ -2,7 +2,6 @@
 #include "screens.h"
 #include <stdio.h>
 #include <string.h>
-#include "screens.h"
 
 /* 0 - Not finish
    1 - Go to title screen
@@ -36,11 +35,7 @@ void UpdateEndingScreen() {
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     Vector2 mousePos = GetMousePosition();
     if (CheckCollisionPointRec(mousePos, playAgainRec)) {
-      if (stage < STAGE_NUM) {
-        finishScreen = 2;
-      } else {
-        finishScreen = 1;
-      }
+      finishScreen = true;
     }
   }
 }
@@ -90,4 +85,4 @@ void UnloadEndingScreen() {
   UnloadSound(endingSound);
 }
 
-int FinishEndingScreen() { return finishScreen; }
+bool FinishEndingScreen() { return finishScreen; }

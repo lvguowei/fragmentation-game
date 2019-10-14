@@ -36,7 +36,7 @@ int main(void) {
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  // ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -81,6 +81,9 @@ static void UpdateTransition(void) {
       case ENDING:
         UnloadEndingScreen();
         break;
+      case TRANSITION:
+        UnloadTransitionScreen();
+        break;
       default:
         break;
       }
@@ -100,6 +103,9 @@ static void UpdateTransition(void) {
       case ENDING:
         InitEndingScreen();
         break;
+      case TRANSITION:
+        InitTransitionScreen();
+        break;
       default:
         break;
       }
@@ -115,8 +121,7 @@ static void UpdateTransition(void) {
         break;
       }
     }
-  } else
-  {
+  } else {
     transAlpha = 0.0f;
     transFromScreen = -1;
     transToScreen = -1;
@@ -134,7 +139,7 @@ void UpdateAndDraw() {
     case TITLE: {
       UpdateTitleScreen();
       if (FinishTitleScreen()) {
-        TransitionToScreen(GAMEPLAY);
+        TransitionToScreen(TRANSITION);
       }
       break;
     case GAMEPLAY: {
@@ -144,27 +149,30 @@ void UpdateAndDraw() {
           highestScore = score;
           prize = true;
         }
+
         TransitionToScreen(ENDING);
       }
       break;
     }
     case ENDING: {
       UpdateEndingScreen();
-      switch (FinishEndingScreen()) {
-      case 0: {
-        // no finishing
-        break;
+      if (FinishEndingScreen()) {
+        if (stage == STAGE_NUM) {
+          TransitionToScreen(TITLE);
+        } else {
+          TransitionToScreen(TRANSITION);
+        }
       }
-      case 1: {
-        TransitionToScreen(TITLE);
-        break;
-      }
-      case 2: {
-        TransitionToScreen(GAMEPLAY);
-        break;
-      }
-      default:
-        break;
+      break;
+    }
+    case TRANSITION: {
+      UpdateTransitionScreen();
+      if (FinishTransitionScreen()) {
+        if (stage == STAGE_NUM) {
+          TransitionToScreen(TITLE);
+        } else {
+          TransitionToScreen(GAMEPLAY);
+        }
       }
       break;
     }
@@ -190,6 +198,10 @@ void UpdateAndDraw() {
   }
   case ENDING: {
     DrawEndingScreen();
+    break;
+  }
+  case TRANSITION: {
+    DrawTransitionScreen();
     break;
   }
   default:

@@ -7,7 +7,7 @@
 #define SCREEN_HEIGHT 1080
 #define STAGE_NUM 3
 
-typedef enum GameScreen { TITLE, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { TITLE, GAMEPLAY, ENDING, TRANSITION } GameScreen;
 
 // Global variables
 GameScreen currentScreen;
@@ -46,7 +46,16 @@ void InitEndingScreen(void);
 void UpdateEndingScreen(void);
 void DrawEndingScreen(void);
 void UnloadEndingScreen(void);
-int FinishEndingScreen(void);
+bool FinishEndingScreen(void);
+
+//----------------------------------------------------------------------------------
+// Transition Screen Functions Declaration
+//----------------------------------------------------------------------------------
+void InitTransitionScreen(void);
+void UpdateTransitionScreen(void);
+void DrawTransitionScreen(void);
+void UnloadTransitionScreen(void);
+bool FinishTransitionScreen(void);
 
 #ifdef __cplusplus
 }
