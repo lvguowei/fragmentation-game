@@ -13,10 +13,10 @@
 #define MARGIN_RIGHT 100
 #define MARGIN_TOP 100
 #define MARGIN_DOWN 100
-#define TIMER_FONT_SIZE 150
-#define SCORE_FONT_SIZE 150
-#define STAGE_FONT_SIZE 150
-#define LABEL_FONT_SIZE 50
+#define TIMER_FONT_SIZE 100
+#define SCORE_FONT_SIZE 100
+#define STAGE_FONT_SIZE 50
+#define LABEL_FONT_SIZE 30
 
 typedef struct Brick {
   Vector2 position;
@@ -243,33 +243,32 @@ void DrawGameplayScreen() {
   }
 
   // Draw stage
-  DrawText("STAGE", 10, MARGIN_TOP, LABEL_FONT_SIZE, ORANGE);
-
-  char sstage[8];
-  sprintf(sstage, "%d", stage);
-  int stageY = MARGIN_TOP + LABEL_FONT_SIZE + 30;
-  DrawText(sstage, 10, stageY, STAGE_FONT_SIZE, ORANGE);
+  const char *sstage = TextFormat("STAGE %d", stage);
+  DrawRectangle(0, 0, MeasureText(sstage, STAGE_FONT_SIZE) + 40, STAGE_FONT_SIZE + 20, Fade(BLACK, 0.2));
+  DrawText(sstage, 20, 10, STAGE_FONT_SIZE, ORANGE);
 
   // Draw countdown timer
-  int timerLabelY = stageY + 250;
+  int timerLabelY = 150;
   DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, TIMER_COLOR);
 
-  char stime[4];
-  int t = DURATION - elapsedTime;
-  if (t < 0)
-    t = 0;
-  sprintf(stime, "%d", t);
-  Color textColor;
+  Color color;
   if (elapsedTime >= DURATION - 5) {
-    textColor = TIMER_COLOR_ALARM;
+    color = TIMER_COLOR_ALARM;
   } else {
-    textColor = TIMER_COLOR;
+    color = TIMER_COLOR;
   }
   int timerY = timerLabelY + LABEL_FONT_SIZE + 30;
-  DrawText(stime, 10, timerY, TIMER_FONT_SIZE, textColor);
+
+  // 180 - 540
+  Vector2 center = (Vector2){100, timerY + 100};
+  float startAng = 180;
+  float endAng = 540 - ((float)elapsedTime / DURATION) * 360;
+  if (endAng < 180) endAng = 180;
+  DrawCircleSector(center, 80, 180,540, 100, Fade(color, 0.2));
+  DrawCircleSector(center, 80, startAng,endAng, 100, Fade(color, 0.6));
 
   // Draw score
-  int scoreLableY = timerY + 250;
+  int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
   DrawText("SCORE", 10, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
   char sscore[32];
   sprintf(sscore, "%d", score);
