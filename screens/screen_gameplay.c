@@ -13,7 +13,7 @@
 #define MARGIN_RIGHT 100
 #define MARGIN_TOP 100
 #define MARGIN_DOWN 100
-#define TIMER_FONT_SIZE 100
+#define TIMER_FONT_SIZE 150
 #define SCORE_FONT_SIZE 100
 #define STAGE_FONT_SIZE 50
 #define LABEL_FONT_SIZE 30
@@ -32,7 +32,8 @@ static int baseTime = 0;
 static int pauseTime = 0;
 static int elapsedTime = 0;
 
-static const Color TIMER_COLOR = GREEN;
+static const Color TIMER_COLOR = LIME;
+static const Color TIMER_TEXT_COLOR = GREEN;
 static const Color TIMER_COLOR_ALARM = RED;
 
 static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
@@ -229,11 +230,17 @@ void DrawGameplayScreen() {
 
   // Draw grid
   for (int i = 0; i <= LINES_OF_BRICKS; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y}, (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,MARGIN_TOP + i * brickSize.y}, 6, BLACK);
+    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y},
+               (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
+                         MARGIN_TOP + i * brickSize.y},
+               6, BLACK);
   }
 
   for (int i = 0; i <= BRICKS_PER_LINE; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP}, (Vector2) {MARGIN_LEFT + i * brickSize.x, MARGIN_TOP + LINES_OF_BRICKS * brickSize.y}, 6, BLACK);
+    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP},
+               (Vector2){MARGIN_LEFT + i * brickSize.x,
+                         MARGIN_TOP + LINES_OF_BRICKS * brickSize.y},
+               6, BLACK);
   }
 
   if (pause) {
@@ -244,28 +251,37 @@ void DrawGameplayScreen() {
 
   // Draw stage
   const char *sstage = TextFormat("STAGE %d", stage);
-  DrawRectangle(0, 0, MeasureText(sstage, STAGE_FONT_SIZE) + 40, STAGE_FONT_SIZE + 20, Fade(BLACK, 0.2));
+  DrawRectangle(0, 0, MeasureText(sstage, STAGE_FONT_SIZE) + 40,
+                STAGE_FONT_SIZE + 20, Fade(BLACK, 0.2));
   DrawText(sstage, 20, 10, STAGE_FONT_SIZE, ORANGE);
 
   // Draw countdown timer
-  int timerLabelY = 150;
-  DrawText("TIMER", 10, timerLabelY, LABEL_FONT_SIZE, TIMER_COLOR);
-
   Color color;
+  Color textColor;
   if (elapsedTime >= DURATION - 5) {
     color = TIMER_COLOR_ALARM;
+    textColor = TIMER_COLOR_ALARM;
   } else {
     color = TIMER_COLOR;
+    textColor = TIMER_TEXT_COLOR;
   }
-  int timerY = timerLabelY + LABEL_FONT_SIZE + 30;
+  int timerY = LABEL_FONT_SIZE + 150;
 
   // 180 - 540
-  Vector2 center = (Vector2){100, timerY + 100};
+  Vector2 center = (Vector2){160, timerY + 100};
   float startAng = 180;
   float endAng = 540 - ((float)elapsedTime / DURATION) * 360;
-  if (endAng < 180) endAng = 180;
-  DrawCircleSector(center, 80, 180,540, 100, Fade(color, 0.2));
-  DrawCircleSector(center, 80, startAng,endAng, 100, Fade(color, 0.6));
+  if (endAng < 180)
+    endAng = 180;
+
+  int t = DURATION - elapsedTime;
+  if (t < 0) t = 0;
+  const char *stime = FormatText("%d", t);
+
+  DrawCircleSector(center, 150, 180, 540, 200, Fade(color, 0.2));
+  DrawCircleSector(center, 150, startAng, endAng, 200, Fade(color, 0.6));
+  DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
+           center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
   // Draw score
   int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
