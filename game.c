@@ -9,6 +9,7 @@
 #endif
 #include "screens/screens.h"
 
+static bool shouldDrawCursor;
 static Texture2D cursor;
 
 // Required variables to manage screen transitions (fade-in, fade-out)
@@ -25,6 +26,7 @@ static void UpdateAndDraw();
 int main(void) {
   srand(time(NULL));
   stage = 0;
+  shouldDrawCursor = true;
   quit = false;
   prize = false;
   score = 0;
@@ -36,7 +38,7 @@ int main(void) {
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  //ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -61,6 +63,7 @@ static void TransitionToScreen(int screen) {
 }
 
 static void UpdateTransition(void) {
+
   if (onTransition) {
     transAlpha += 0.02f;
 
@@ -184,6 +187,10 @@ void UpdateAndDraw() {
     UpdateTransition();
   }
 
+  if (IsKeyPressed(KEY_M)) {
+    shouldDrawCursor = !shouldDrawCursor;
+  }
+
   BeginDrawing();
 
   ClearBackground(RAYWHITE);
@@ -216,8 +223,10 @@ void UpdateAndDraw() {
     // Do not draw cursor in web
 #else
   // Draw cursor
-  Vector2 cursorPos = GetMousePosition();
-  DrawTexture(cursor, cursorPos.x, cursorPos.y, WHITE);
+  if (shouldDrawCursor) {
+    Vector2 cursorPos = GetMousePosition();
+    DrawTexture(cursor, cursorPos.x, cursorPos.y, WHITE);
+  }
 #endif
 
   EndDrawing();
