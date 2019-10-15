@@ -12,11 +12,13 @@ static char STAGE_3_MESSAGE[] = "After 1 year ...";
 static int TEXT_ANIM_SPEED = 10;
 
 static Music transitionMusic;
+static Sound startSound;
 
 void InitTransitionScreen() {
   finishScreen = false;
   framesCount = 0;
   transitionMusic = LoadMusicStream("resources/music/transition.mp3");
+  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(transitionMusic);
 }
 
@@ -27,18 +29,21 @@ void UpdateTransitionScreen() {
     switch (stage) {
     case 0: {
       if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_1_MESSAGE)) {
+        PlaySound(startSound);
         finishScreen = true;
       }
       break;
     }
     case 1: {
       if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_2_MESSAGE)) {
+        PlaySound(startSound);
         finishScreen = true;
       }
       break;
     }
     case 2: {
       if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_3_MESSAGE)) {
+        PlaySound(startSound);
         finishScreen = true;
       }
       break;
@@ -77,6 +82,7 @@ void DrawTransitionScreen() {
 void UnloadTransitionScreen() {
   StopMusicStream(transitionMusic);
   UnloadMusicStream(transitionMusic);
+  UnloadSound(startSound);
 }
 
 bool FinishTransitionScreen() { return finishScreen; }

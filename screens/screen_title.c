@@ -6,18 +6,18 @@
 #define TITLE_GRID_COLS 30
 #define TITLE_COLOR_NUM 6
 
-const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
+static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
     (Color){147, 58, 22, 180}, (Color){141, 2, 31, 180},
     (Color){94, 25, 20, 180},  (Color){184, 15, 10, 180},
     (Color){66, 13, 9, 180},   (Color){255, 40, 0, 180}};
 
-Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
-Rectangle closeButtonRec;
-Music titleMusic;
+static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
+static Music titleMusic;
+static Sound startSound;
 
 static bool finishScreen;
 static int framesCount;
-Rectangle closeButtonRec;
+static Rectangle closeButtonRec;
 
 void UpdateTitleGridColors();
 
@@ -26,6 +26,7 @@ void InitTitleScreen() {
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
   finishScreen = false;
   titleMusic = LoadMusicStream("resources/music/title.mp3");
+  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(titleMusic);
   UpdateTitleGridColors();
 }
@@ -41,6 +42,7 @@ void UpdateTitleScreen() {
     if (CheckCollisionPointRec(mousePos, closeButtonRec)) {
       quit = true;
     } else {
+      PlaySound(startSound);
       finishScreen = true;
     }
   }
@@ -86,6 +88,7 @@ void DrawTitleScreen() {
 
 void UnloadTitleScreen() {
   UnloadMusicStream(titleMusic);
+  UnloadSound(startSound);
 }
 
 bool FinishTitleScreen() { return finishScreen; }

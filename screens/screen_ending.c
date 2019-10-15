@@ -6,6 +6,7 @@
 static bool finishScreen;
 static int framesCount;
 static Music endingMusic;
+static Sound startSound;
 
 static Rectangle playAgainRec;
 
@@ -16,6 +17,7 @@ void InitEndingScreen() {
       (Rectangle){SCREEN_WIDTH / 2 - 300,
                   SCREEN_HEIGHT / 2 - 200 - 160 + 200 + 200 + 300, 600, 150};
   endingMusic = LoadMusicStream("resources/music/ending.mp3");
+  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(endingMusic);
 
 }
@@ -27,6 +29,7 @@ void UpdateEndingScreen() {
     Vector2 mousePos = GetMousePosition();
     if (CheckCollisionPointRec(mousePos, playAgainRec)) {
       finishScreen = true;
+      PlaySound(startSound);
     }
   }
 }
@@ -72,6 +75,7 @@ void DrawEndingScreen() {
 void UnloadEndingScreen() {
   StopMusicStream(endingMusic);
   UnloadMusicStream(endingMusic);
+  UnloadSound(startSound);
 }
 
 bool FinishEndingScreen() { return finishScreen; }
