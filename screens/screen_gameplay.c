@@ -5,8 +5,8 @@
 #include <stdlib.h>
 
 #define DURATION 30
-#define LINES_OF_BRICKS 15
-#define BRICKS_PER_LINE 15
+#define LINES_OF_BRICKS 5
+#define BRICKS_PER_LINE 5
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_LEFT 400
@@ -40,9 +40,9 @@ static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
                                             ORANGE};
 
 static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
+static int filesCounts[FILE_NUM] = {0};
 static Vector2 brickSize = {0};
-static int targetX = 0;
-static int targetY = 0;
+static int currentFile = 0;
 static int fragmentationLevel = 10; // from 0 - 100
 
 static Sound clickSound;
@@ -52,8 +52,8 @@ static Music stage1Music;
 static Music stage2Music;
 static Music stage3Music;
 
-static void chooseRandomBrick(int *x, int *y);
-static void chooseNextTarget(int *nextX, int *nextY);
+bool chooseNextFile();
+bool allClear();
 
 void InitGameplayScreen() {
   finishScreen = false;
@@ -97,10 +97,6 @@ void InitGameplayScreen() {
       (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / BRICKS_PER_LINE,
                 (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / LINES_OF_BRICKS};
 
-  // Select a random target brick
-  targetX = rand() % BRICKS_PER_LINE;
-  targetY = rand() % LINES_OF_BRICKS;
-
   // Generate a bricks map
   int prevFile = 0;
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
@@ -108,7 +104,6 @@ void InitGameplayScreen() {
       brick[i][j].position =
           (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_LEFT,
                     i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
-
       brick[i][j].active = false;
       if (rand() % 100 <= 100 - fragmentationLevel) {
         brick[i][j].file = prevFile;
@@ -117,8 +112,12 @@ void InitGameplayScreen() {
         brick[i][j].file = file;
         prevFile = file;
       }
+      filesCounts[brick[i][j].file]++;
     }
   }
+
+  // select current file
+  chooseNextFile();
 }
 
 void UpdateGameplayScreen() {
@@ -164,26 +163,30 @@ void UpdateGameplayScreen() {
         }
       }
 
-      if (IsMouseButtonPressed(0)) {
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         // Handle brick clicked
         Vector2 mousePos = GetMousePosition();
         int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
         int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
-        if (i == targetY && j == targetX) {
-          int nextX, nextY;
-          chooseNextTarget(&nextX, &nextY);
-          targetX = nextX;
-          targetY = nextY;
-
+        if (brick[i][j].file == currentFile && !brick[i][j].active) {
           brick[i][j].active = true;
-
+          filesCounts[currentFile]--;
+          if (filesCounts[currentFile] == 0) {
+            chooseNextFile();
+            // TODO finish game somehow
+          }
           // Increase score
           score += 5;
-
           // Play sound
           PlaySound(clickSound);
         }
+      }
+
+      // update current file
+      if (framesCount % 180 == 0) {
+        chooseNextFile();
+        // TODO finish game somehow
       }
     }
   }
@@ -201,30 +204,15 @@ void DrawGameplayScreen() {
   // Draw bricks
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
     for (int j = 0; j < BRICKS_PER_LINE; j++) {
-      Color dark = FILE_COLORS[brick[i][j].file];
-      Color light = Fade(dark, 0.4);
-      Color targetColor;
-      if ((framesCount / 20) % 2 == 0) {
-        targetColor = dark;
+      Color color;
+      if (brick[i][j].active) {
+        color = BLANK;
       } else {
-        targetColor = light;
+        color = FILE_COLORS[brick[i][j].file];
       }
-
-      if (targetX == j && targetY == i) {
-        DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
-                      brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                      brickSize.y, targetColor);
-      } else {
-        Color color;
-        if (brick[i][j].active) {
-          color = BLANK;
-        } else {
-          color = dark;
-        }
-        DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
-                      brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                      brickSize.y, color);
-      }
+      DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
+                    brick[i][j].position.y - brickSize.y / 2, brickSize.x,
+                    brickSize.y, color);
     }
   }
 
@@ -275,13 +263,19 @@ void DrawGameplayScreen() {
     endAng = 180;
 
   int t = DURATION - elapsedTime;
-  if (t < 0) t = 0;
+  if (t < 0)
+    t = 0;
   const char *stime = FormatText("%d", t);
 
   DrawCircleSector(center, 150, 180, 540, 200, Fade(color, 0.2));
   DrawCircleSector(center, 150, startAng, endAng, 200, Fade(color, 0.6));
   DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
+
+
+  // Draw current file
+
+  DrawRectangle(10, SCREEN_HEIGHT / 2, 100, 100, FILE_COLORS[currentFile]);
 
   // Draw score
   int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
@@ -313,35 +307,27 @@ void UnloadGameplayScreen() {
 
 bool FinishGameplayScreen() { return finishScreen; }
 
-void chooseRandomBrick(int *x, int *y) {
-  do {
-    *x = rand() % BRICKS_PER_LINE;
-    *y = rand() % LINES_OF_BRICKS;
-  } while (brick[*y][*x].active);
-}
-
-void chooseNextTarget(int *nextX, int *nextY) {
-  if (targetX == BRICKS_PER_LINE - 1 && targetY == LINES_OF_BRICKS - 1) {
-    // target is last brick
-    chooseRandomBrick(nextX, nextY);
-  } else {
-    int nX = (targetX + 1) % BRICKS_PER_LINE;
-    int nY;
-    if (targetX == BRICKS_PER_LINE - 1) {
-      nY = targetY + 1;
-    } else {
-      nY = targetY;
-    }
-    if (brick[nY][nX].file == brick[targetY][targetX].file &&
-        !brick[nY][nX].active) {
-      if (rand() % 10 <= 9) {
-        *nextX = nX;
-        *nextY = nY;
-      } else {
-        chooseRandomBrick(nextX, nextY);
-      }
-    } else {
-      chooseRandomBrick(nextX, nextY);
+bool allClear() {
+  for (int i = 0; i < FILE_NUM; i++) {
+    if (filesCounts[i] > 0) {
+      return false;
     }
   }
+  return true;
+}
+
+bool chooseNextFile() {
+  if (allClear()) {
+    return false;
+  }
+
+  int result = rand() % FILE_NUM;
+  int count;
+  count = filesCounts[result];
+  while (count == 0) {
+    result = (result + 1) % FILE_NUM;
+    count = filesCounts[result];
+  }
+  currentFile = result;
+  return true;
 }
