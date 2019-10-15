@@ -97,6 +97,11 @@ void InitGameplayScreen() {
       (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / BRICKS_PER_LINE,
                 (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / LINES_OF_BRICKS};
 
+  // Init files counts
+  for (int i = 0; i < FILE_NUM; i++) {
+    filesCounts[i] = 0;
+  }
+
   // Generate a bricks map
   int prevFile = 0;
   for (int i = 0; i < LINES_OF_BRICKS; i++) {
@@ -173,8 +178,9 @@ void UpdateGameplayScreen() {
           brick[i][j].active = true;
           filesCounts[currentFile]--;
           if (filesCounts[currentFile] == 0) {
-            chooseNextFile();
-            // TODO finish game somehow
+            if (!chooseNextFile()) {
+              finishScreen = true;
+            }
           }
           // Increase score
           score += 5;
@@ -185,8 +191,9 @@ void UpdateGameplayScreen() {
 
       // update current file
       if (framesCount % 180 == 0) {
-        chooseNextFile();
-        // TODO finish game somehow
+        if (!chooseNextFile()) {
+          finishScreen = true;
+        }
       }
     }
   }
