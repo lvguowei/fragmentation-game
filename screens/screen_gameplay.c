@@ -26,6 +26,7 @@ typedef struct Brick {
 
 static int framesCount;
 static bool finishScreen;
+static int fileChangeRate;
 static int num_rows;
 static int num_cols;
 static bool pause = false;
@@ -68,6 +69,7 @@ void InitGameplayScreen() {
   if (stage == 1) {
     num_rows = 10;
     num_cols = 10;
+    fileChangeRate = 10 * 60;
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
@@ -75,13 +77,15 @@ void InitGameplayScreen() {
   } else if (stage == 2) {
     num_rows = 15;
     num_cols = 15;
+    fileChangeRate = 6 * 60;
     InitStage2Background();
     stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
     SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
-    num_rows = 25;
-    num_cols = 25;
+    num_rows = 20;
+    num_cols = 20;
+    fileChangeRate = 3 * 60;
     InitStage3Background();
     stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
     SetMusicVolume(stage3Music, 1.0f);
@@ -196,7 +200,7 @@ void UpdateGameplayScreen() {
       }
 
       // update current file
-      if (framesCount % 180 == 0) {
+      if (framesCount % fileChangeRate == 0) {
         if (!chooseNextFile()) {
           finishScreen = true;
         }
@@ -213,6 +217,9 @@ void DrawGameplayScreen() {
   } else if (stage == STAGE_NUM) {
     DrawStage3Background();
   }
+
+  // draw hint color
+  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(FILE_COLORS[currentFile], 0.4));
 
   // Draw bricks
   for (int i = 0; i < num_rows; i++) {
@@ -286,8 +293,8 @@ void DrawGameplayScreen() {
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
   // Draw current file
-
-  DrawRectangle(10, SCREEN_HEIGHT / 2, 100, 100, FILE_COLORS[currentFile]);
+  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE, FILE_COLORS[currentFile]);
+  DrawRectangle(10, SCREEN_HEIGHT / 2, 200, 150, FILE_COLORS[currentFile]);
 
   // Draw score
   int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
