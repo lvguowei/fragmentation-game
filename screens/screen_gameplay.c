@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_ROWS 100
+#define MAX_COLS 100
 #define DURATION 30
-#define LINES_OF_BRICKS 5
-#define BRICKS_PER_LINE 5
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_LEFT 400
@@ -26,7 +26,8 @@ typedef struct Brick {
 
 static int framesCount;
 static bool finishScreen;
-
+static int num_rows;
+static int num_cols;
 static bool pause = false;
 static int baseTime = 0;
 static int pauseTime = 0;
@@ -39,7 +40,7 @@ static const Color TIMER_COLOR_ALARM = RED;
 static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
                                             ORANGE};
 
-static Brick brick[LINES_OF_BRICKS][BRICKS_PER_LINE];
+static Brick brick[MAX_ROWS][MAX_COLS];
 static int filesCounts[FILE_NUM] = {0};
 static Vector2 brickSize = {0};
 static int currentFile = 0;
@@ -65,16 +66,22 @@ void InitGameplayScreen() {
   beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
 
   if (stage == 1) {
+    num_rows = 10;
+    num_cols = 10;
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
   } else if (stage == 2) {
+    num_rows = 15;
+    num_cols = 15;
     InitStage2Background();
     stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
     SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
+    num_rows = 25;
+    num_cols = 25;
     InitStage3Background();
     stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
     SetMusicVolume(stage3Music, 1.0f);
@@ -93,9 +100,8 @@ void InitGameplayScreen() {
   }
 
   // Calculate Brick size
-  brickSize =
-      (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / BRICKS_PER_LINE,
-                (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / LINES_OF_BRICKS};
+  brickSize = (Vector2){(SCREEN_WIDTH - MARGIN_LEFT - MARGIN_RIGHT) / num_cols,
+                        (SCREEN_HEIGHT - MARGIN_TOP - MARGIN_DOWN) / num_rows};
 
   // Init files counts
   for (int i = 0; i < FILE_NUM; i++) {
@@ -104,8 +110,8 @@ void InitGameplayScreen() {
 
   // Generate a bricks map
   int prevFile = 0;
-  for (int i = 0; i < LINES_OF_BRICKS; i++) {
-    for (int j = 0; j < BRICKS_PER_LINE; j++) {
+  for (int i = 0; i < num_rows; i++) {
+    for (int j = 0; j < num_cols; j++) {
       brick[i][j].position =
           (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_LEFT,
                     i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
@@ -209,8 +215,8 @@ void DrawGameplayScreen() {
   }
 
   // Draw bricks
-  for (int i = 0; i < LINES_OF_BRICKS; i++) {
-    for (int j = 0; j < BRICKS_PER_LINE; j++) {
+  for (int i = 0; i < num_rows; i++) {
+    for (int j = 0; j < num_cols; j++) {
       Color color;
       if (brick[i][j].active) {
         color = BLANK;
@@ -224,17 +230,17 @@ void DrawGameplayScreen() {
   }
 
   // Draw grid
-  for (int i = 0; i <= LINES_OF_BRICKS; i++) {
+  for (int i = 0; i <= num_rows; i++) {
     DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y},
-               (Vector2){MARGIN_LEFT + BRICKS_PER_LINE * brickSize.x,
+               (Vector2){MARGIN_LEFT + num_cols * brickSize.x,
                          MARGIN_TOP + i * brickSize.y},
                6, BLACK);
   }
 
-  for (int i = 0; i <= BRICKS_PER_LINE; i++) {
+  for (int i = 0; i <= num_cols; i++) {
     DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP},
                (Vector2){MARGIN_LEFT + i * brickSize.x,
-                         MARGIN_TOP + LINES_OF_BRICKS * brickSize.y},
+                         MARGIN_TOP + num_rows * brickSize.y},
                6, BLACK);
   }
 
@@ -278,7 +284,6 @@ void DrawGameplayScreen() {
   DrawCircleSector(center, 150, startAng, endAng, 200, Fade(color, 0.6));
   DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
-
 
   // Draw current file
 
