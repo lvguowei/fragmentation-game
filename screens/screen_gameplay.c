@@ -94,10 +94,10 @@ void InitGameplayScreen() {
 
   // Set fragmentationLevel based on stage
   if (stage == 1) {
-    fragmentationLevel = 5;
+    fragmentationLevel = 10;
   }
   if (stage == 2) {
-    fragmentationLevel = 15;
+    fragmentationLevel = 50;
   }
   if (stage == 3) {
     fragmentationLevel = 100;
@@ -184,18 +184,34 @@ void UpdateGameplayScreen() {
         int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
         int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
-        if (brick[i][j].file == currentFile && !brick[i][j].active) {
-          brick[i][j].active = true;
-          filesCounts[currentFile]--;
-          if (filesCounts[currentFile] == 0) {
-            if (!chooseNextFile()) {
-              finishScreen = true;
+        while (true) {
+          if (brick[i][j].file == currentFile && !brick[i][j].active) {
+            brick[i][j].active = true;
+            filesCounts[currentFile]--;
+            if (filesCounts[currentFile] == 0) {
+              if (!chooseNextFile()) {
+                finishScreen = true;
+              }
             }
+            // Increase score
+            score += 5;
+            // Play sound
+            PlaySound(clickSound);
+
+            // go to next grid
+            if (j == num_cols - 1) {
+              if (i == num_rows - 1) {
+                break;
+              } else {
+                i++;
+                j = 0;
+              }
+            } else {
+              j++;
+            }
+          } else {
+            break;
           }
-          // Increase score
-          score += 5;
-          // Play sound
-          PlaySound(clickSound);
         }
       }
 
