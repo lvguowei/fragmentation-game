@@ -180,11 +180,10 @@ void UpdateGameplayScreen() {
         }
       }
 
-
       for (int i = 0; i < num_rows; i++) {
         for (int j = 0; j < num_cols; j++) {
           if (brick[i][j].state == PENDING) {
-            if (framesCount % 2 == 0) {
+            if (framesCount % 5 == 0) {
               brick[i][j].state = HIDDEN;
               filesCounts[currentFile]--;
               score += 5;
@@ -211,12 +210,6 @@ void UpdateGameplayScreen() {
         while (true) {
           if (brick[i][j].file == currentFile && brick[i][j].state == NORMAL) {
             brick[i][j].state = PENDING;
-            
-            
-            // Increase score
-            
-            // Play sound
-
             // go to next grid
             if (j == num_cols - 1) {
               if (i == num_rows - 1) {
