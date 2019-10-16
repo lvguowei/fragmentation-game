@@ -18,9 +18,11 @@
 #define STAGE_FONT_SIZE 50
 #define LABEL_FONT_SIZE 30
 
+typedef enum { NORMAL, PENDING, HIDDEN } BrickState;
+
 typedef struct Brick {
   Vector2 position;
-  bool active;
+  BrickState state;
   int file;
 } Brick;
 
@@ -119,7 +121,7 @@ void InitGameplayScreen() {
       brick[i][j].position =
           (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_LEFT,
                     i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
-      brick[i][j].active = false;
+      brick[i][j].state = NORMAL;
       if (rand() % 100 <= 100 - fragmentationLevel) {
         brick[i][j].file = prevFile;
       } else {
@@ -178,6 +180,28 @@ void UpdateGameplayScreen() {
         }
       }
 
+
+      for (int i = 0; i < num_rows; i++) {
+        for (int j = 0; j < num_cols; j++) {
+          if (brick[i][j].state == PENDING) {
+            if (framesCount % 2 == 0) {
+              brick[i][j].state = HIDDEN;
+              filesCounts[currentFile]--;
+              score += 5;
+              PlaySound(clickSound);
+              if (filesCounts[currentFile] == 0) {
+                if (!chooseNextFile()) {
+                  finishScreen = true;
+                  goto end;
+                }
+              }
+              goto end;
+            }
+          }
+        }
+      }
+    end:
+
       if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         // Handle brick clicked
         Vector2 mousePos = GetMousePosition();
@@ -185,18 +209,13 @@ void UpdateGameplayScreen() {
         int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
         while (true) {
-          if (brick[i][j].file == currentFile && !brick[i][j].active) {
-            brick[i][j].active = true;
-            filesCounts[currentFile]--;
-            if (filesCounts[currentFile] == 0) {
-              if (!chooseNextFile()) {
-                finishScreen = true;
-              }
-            }
+          if (brick[i][j].file == currentFile && brick[i][j].state == NORMAL) {
+            brick[i][j].state = PENDING;
+            
+            
             // Increase score
-            score += 5;
+            
             // Play sound
-            PlaySound(clickSound);
 
             // go to next grid
             if (j == num_cols - 1) {
@@ -235,13 +254,14 @@ void DrawGameplayScreen() {
   }
 
   // draw hint color
-  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(FILE_COLORS[currentFile], 0.4));
+  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+                Fade(FILE_COLORS[currentFile], 0.4));
 
   // Draw bricks
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
       Color color;
-      if (brick[i][j].active) {
+      if (brick[i][j].state == HIDDEN) {
         color = BLANK;
       } else {
         color = FILE_COLORS[brick[i][j].file];
@@ -309,7 +329,8 @@ void DrawGameplayScreen() {
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
   // Draw current file
-  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE, FILE_COLORS[currentFile]);
+  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE,
+           FILE_COLORS[currentFile]);
   DrawRectangle(10, SCREEN_HEIGHT / 2, 200, 150, FILE_COLORS[currentFile]);
 
   // Draw score
