@@ -36,11 +36,11 @@ static int baseTime = 0;
 static int pauseTime = 0;
 static int elapsedTime = 0;
 
-static const Color TIMER_COLOR = LIME;
-static const Color TIMER_TEXT_COLOR = GREEN;
+static const Color TIMER_COLOR = LIGHTGRAY;
+static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE, PINK,
                                             ORANGE};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
@@ -71,7 +71,7 @@ void InitGameplayScreen() {
   if (stage == 1) {
     num_rows = 10;
     num_cols = 10;
-    fileChangeRate = 10 * 60;
+    fileChangeRate = 3 * 60;
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
@@ -185,7 +185,7 @@ void UpdateGameplayScreen() {
           if (brick[i][j].state == PENDING) {
             if (framesCount % 5 == 0) {
               brick[i][j].state = HIDDEN;
-              filesCounts[currentFile]--;
+              filesCounts[brick[i][j].file]--;
               score += 5;
               PlaySound(clickSound);
               if (filesCounts[currentFile] == 0) {
