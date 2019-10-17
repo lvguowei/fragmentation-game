@@ -34,9 +34,12 @@ static int num_rows;
 static int num_cols;
 
 static bool showTutorial;
-static int showTutorialTime;
-static int baseTime;
-static int elapsedTime;
+static double tutorialBaseTime;
+static double elapsedTime;
+
+static bool showCountDown;
+static double countDownBaseTime;
+static int countDown;
 
 static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
@@ -64,10 +67,12 @@ bool allClear();
 void InitGameplayScreen() {
   finishScreen = false;
   framesCount = 0;
-  baseTime = GetTime();
+  tutorialBaseTime = GetTime();
   showTutorial = false;
-  showTutorialTime = 0;
   elapsedTime = 0;
+  showCountDown = true;
+  countDown = 3;
+  countDownBaseTime = GetTime();
 
   clickSound = LoadSound("resources/sounds/click.mp3");
   beepSound = LoadSound("resources/sounds/beep.mp3");
@@ -82,7 +87,6 @@ void InitGameplayScreen() {
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
     showTutorial = true;
-    showTutorialTime = GetTime();
   } else if (stage == 2) {
     num_rows = 15;
     num_cols = 15;
@@ -159,80 +163,98 @@ void UpdateGameplayScreen() {
   }
 
   if (showTutorial) {
+    showCountDown = false;
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-      baseTime = GetTime() - (showTutorialTime - baseTime);
       showTutorial = false;
+      showCountDown = true;
+      countDownBaseTime = GetTime();
     }
   } else {
-    int prevElapseTime = elapsedTime;
-    // Calculate elapsed time
-    elapsedTime = GetTime() - baseTime;
-
-    if (elapsedTime > DURATION) {
-      // Times up!
-      finishScreen = true;
-    } else {
-      if (elapsedTime >= DURATION - 5 && elapsedTime <= DURATION) {
-        if (elapsedTime == prevElapseTime + 1) {
-          if (elapsedTime == DURATION) {
-            PlaySound(beepHighSound);
-          } else {
-            PlaySound(beepSound);
-          }
-        }
+    if (showCountDown) {
+      if (GetTime() - countDownBaseTime < 1) {
+        countDown = 3;
       }
+      else if (GetTime() - countDownBaseTime < 2) {
+        countDown = 2;
+      }
+      else if (GetTime() - countDownBaseTime < 3) {
+        countDown = 1;
+      } else {
+        showCountDown = false;
+        tutorialBaseTime = GetTime();
+      }
+    } else {
+      int prevElapseTime = elapsedTime;
+      // Calculate elapsed time
+      elapsedTime = GetTime() - tutorialBaseTime;
 
-      for (int i = 0; i < num_rows; i++) {
-        for (int j = 0; j < num_cols; j++) {
-          if (brick[i][j].state == PENDING) {
-            if (framesCount % 5 == 0) {
-              brick[i][j].state = HIDDEN;
-              filesCounts[brick[i][j].file]--;
-              score += 5;
-              PlaySound(clickSound);
-              if (filesCounts[currentFile] == 0) {
-                if (!chooseNextFile()) {
-                  finishScreen = true;
-                  goto end;
-                }
-              }
-              goto end;
+      if (elapsedTime > DURATION) {
+        // Times up!
+        finishScreen = true;
+      } else {
+        if (elapsedTime >= DURATION - 5 && elapsedTime <= DURATION) {
+          if (elapsedTime == prevElapseTime + 1) {
+            if (elapsedTime == DURATION) {
+              PlaySound(beepHighSound);
+            } else {
+              PlaySound(beepSound);
             }
           }
         }
-      }
-    end:
 
-      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        // Handle brick clicked
-        Vector2 mousePos = GetMousePosition();
-        int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
-        int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
+        for (int i = 0; i < num_rows; i++) {
+          for (int j = 0; j < num_cols; j++) {
+            if (brick[i][j].state == PENDING) {
+              if (framesCount % 3 == 0) {
+                brick[i][j].state = HIDDEN;
+                filesCounts[brick[i][j].file]--;
+                score += 5;
+                PlaySound(clickSound);
+                if (filesCounts[currentFile] == 0) {
+                  if (!chooseNextFile()) {
+                    finishScreen = true;
+                    goto end;
+                  }
+                }
+                goto end;
+              }
+            }
+          }
+        }
+      end:
 
-        while (true) {
-          if (brick[i][j].file == currentFile && brick[i][j].state == NORMAL) {
-            brick[i][j].state = PENDING;
-            // go to next grid
-            if (j == num_cols - 1) {
-              if (i == num_rows - 1) {
-                break;
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+          // Handle brick clicked
+          Vector2 mousePos = GetMousePosition();
+          int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
+          int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
+
+          while (true) {
+            if (brick[i][j].file == currentFile &&
+                brick[i][j].state == NORMAL) {
+              brick[i][j].state = PENDING;
+              // go to next grid
+              if (j == num_cols - 1) {
+                if (i == num_rows - 1) {
+                  break;
+                } else {
+                  i++;
+                  j = 0;
+                }
               } else {
-                i++;
-                j = 0;
+                j++;
               }
             } else {
-              j++;
+              break;
             }
-          } else {
-            break;
           }
         }
-      }
 
-      // update current file
-      if (framesCount % fileChangeRate == 0) {
-        if (!chooseNextFile()) {
-          finishScreen = true;
+        // update current file
+        if (framesCount % fileChangeRate == 0) {
+          if (!chooseNextFile()) {
+            finishScreen = true;
+          }
         }
       }
     }
@@ -303,7 +325,7 @@ void DrawGameplayScreen() {
   // 180 - 540
   Vector2 center = (Vector2){160, timerY + 100};
   float startAng = 180;
-  float endAng = 540 - ((float)elapsedTime / DURATION) * 360;
+  float endAng = 540 - (elapsedTime / DURATION) * 360;
   if (endAng < 180)
     endAng = 180;
 
@@ -324,6 +346,12 @@ void DrawGameplayScreen() {
   sprintf(sscore, "%d", score);
   int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
   DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
+
+  if (showCountDown) {
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
+    const char *cd = FormatText("%d", countDown);
+    DrawText(cd, (SCREEN_WIDTH - MeasureText(cd, 300)) / 2, (SCREEN_HEIGHT - 300) / 2, 300, RAYWHITE);
+  }
 
   // draw tutorial
   if (showTutorial) {
