@@ -250,7 +250,7 @@ void DrawGameplayScreen() {
 
   // draw hint color
   DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                Fade(FILE_COLORS[currentFile], 0.4));
+                Fade(FILE_COLORS[currentFile], 0.3));
 
   // Draw bricks
   for (int i = 0; i < num_rows; i++) {
@@ -281,8 +281,6 @@ void DrawGameplayScreen() {
                          MARGIN_TOP + num_rows * brickSize.y},
                6, BLACK);
   }
-
-  
 
   // Draw stage
   const char *sstage = TextFormat("STAGE %d", stage);
@@ -319,11 +317,6 @@ void DrawGameplayScreen() {
   DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
-  // Draw current file
-  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE,
-           FILE_COLORS[currentFile]);
-  DrawRectangle(10, SCREEN_HEIGHT / 2, 200, 150, FILE_COLORS[currentFile]);
-
   // Draw score
   int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
   DrawText("SCORE", 10, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
@@ -332,24 +325,28 @@ void DrawGameplayScreen() {
   int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
   DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
 
+  // draw tutorial
   if (pause) {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
     Rectangle rec = {300, 550, SCREEN_WIDTH - 800, 400};
-    DrawTextRec(GetFontDefault(), "<--- Click on the boxes that has the same color as hinted on the left.", rec, 60, 5, true, RAYWHITE);
-    DrawTriangle((Vector2){10, 60}, (Vector2){120, 560}, (Vector2){120, 640}, RAYWHITE);
+    DrawTextRec(GetFontDefault(),
+                "<--- Click on the boxes that has the same color as hinted on "
+                "the left.",
+                rec, 60, 5, true, RAYWHITE);
+    DrawTriangle((Vector2){10, 60}, (Vector2){120, 560}, (Vector2){120, 640},
+                 RAYWHITE);
 
     if ((framesCount / 40) % 2 == 0) {
-      /*****************************************************************************/
-      /* DrawText("Touch Screen to Start",                                         */
-      /*          SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 30) / 2, */
-      /*          SCREEN_HEIGHT / 2 - 30 + 300, 30, BLANK);                        */
-      /*****************************************************************************/
-    } else {
       DrawText("Touch Screen to Start",
                SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 30) / 2,
                SCREEN_HEIGHT / 2 - 30 + 300, 30, LIGHTGRAY);
     }
   }
+
+  // Draw current file
+  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE,
+           FILE_COLORS[currentFile]);
+  DrawRectangle(10, SCREEN_HEIGHT / 2, 200, 150, FILE_COLORS[currentFile]);
 }
 
 void UnloadGameplayScreen() {
