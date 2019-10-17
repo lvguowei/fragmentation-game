@@ -29,11 +29,13 @@ typedef struct Brick {
 static int framesCount;
 static bool finishScreen;
 static int fileChangeRate;
+
 static int num_rows;
 static int num_cols;
-static bool pause;
+
+static bool showTutorial;
+static int showTutorialTime;
 static int baseTime;
-static int pauseTime;
 static int elapsedTime;
 
 static const Color TIMER_COLOR = LIGHTGRAY;
@@ -63,8 +65,8 @@ void InitGameplayScreen() {
   finishScreen = false;
   framesCount = 0;
   baseTime = GetTime();
-  pause = false;
-  pauseTime = 0;
+  showTutorial = false;
+  showTutorialTime = 0;
   elapsedTime = 0;
 
   clickSound = LoadSound("resources/sounds/click.mp3");
@@ -79,8 +81,8 @@ void InitGameplayScreen() {
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
-    pause = true;
-    pauseTime = GetTime();
+    showTutorial = true;
+    showTutorialTime = GetTime();
   } else if (stage == 2) {
     num_rows = 15;
     num_cols = 15;
@@ -156,14 +158,12 @@ void UpdateGameplayScreen() {
     UpdateMusicStream(stage3Music);
   }
 
-  if (pause) {
+  if (showTutorial) {
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-      baseTime = GetTime() - (pauseTime - baseTime);
-      pause = false;
+      baseTime = GetTime() - (showTutorialTime - baseTime);
+      showTutorial = false;
     }
-  }
-
-  if (!pause) {
+  } else {
     int prevElapseTime = elapsedTime;
     // Calculate elapsed time
     elapsedTime = GetTime() - baseTime;
@@ -326,7 +326,7 @@ void DrawGameplayScreen() {
   DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
 
   // draw tutorial
-  if (pause) {
+  if (showTutorial) {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
     Rectangle rec = {300, 550, SCREEN_WIDTH - 800, 400};
     DrawTextRec(GetFontDefault(),
