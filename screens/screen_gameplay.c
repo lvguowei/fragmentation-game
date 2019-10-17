@@ -71,7 +71,7 @@ void InitGameplayScreen() {
   if (stage == 1) {
     num_rows = 10;
     num_cols = 10;
-    fileChangeRate = 3 * 60;
+    fileChangeRate = 10 * 60;
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
