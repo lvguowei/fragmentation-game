@@ -31,10 +31,10 @@ static bool finishScreen;
 static int fileChangeRate;
 static int num_rows;
 static int num_cols;
-static bool pause = false;
-static int baseTime = 0;
-static int pauseTime = 0;
-static int elapsedTime = 0;
+static bool pause;
+static int baseTime;
+static int pauseTime;
+static int elapsedTime;
 
 static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
@@ -63,6 +63,9 @@ void InitGameplayScreen() {
   finishScreen = false;
   framesCount = 0;
   baseTime = GetTime();
+  pause = false;
+  pauseTime = 0;
+  elapsedTime = 0;
 
   clickSound = LoadSound("resources/sounds/click.mp3");
   beepSound = LoadSound("resources/sounds/beep.mp3");
@@ -76,6 +79,8 @@ void InitGameplayScreen() {
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
+    pause = true;
+    pauseTime = GetTime();
   } else if (stage == 2) {
     num_rows = 15;
     num_cols = 15;
@@ -151,14 +156,11 @@ void UpdateGameplayScreen() {
     UpdateMusicStream(stage3Music);
   }
 
-  if (IsKeyPressed(KEY_P)) {
-    // Reset baseTime when unpause game
-    if (pause) {
+  if (pause) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
       baseTime = GetTime() - (pauseTime - baseTime);
+      pause = false;
     }
-    pause = !pause;
-    framesCount = 0;
-    pauseTime = GetTime();
   }
 
   if (!pause) {
@@ -280,11 +282,7 @@ void DrawGameplayScreen() {
                6, BLACK);
   }
 
-  if (pause) {
-    DrawText("GAME PAUSED",
-             SCREEN_WIDTH / 2 - MeasureText("GAME PAUSED", 40) / 2,
-             SCREEN_HEIGHT / 2 - 40, 40, GRAY);
-  }
+  
 
   // Draw stage
   const char *sstage = TextFormat("STAGE %d", stage);
@@ -333,6 +331,25 @@ void DrawGameplayScreen() {
   sprintf(sscore, "%d", score);
   int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
   DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
+
+  if (pause) {
+    DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
+    Rectangle rec = {300, 550, SCREEN_WIDTH - 800, 400};
+    DrawTextRec(GetFontDefault(), "<--- Click on the boxes that has the same color as hinted on the left.", rec, 60, 5, true, RAYWHITE);
+    DrawTriangle((Vector2){10, 60}, (Vector2){120, 560}, (Vector2){120, 640}, RAYWHITE);
+
+    if ((framesCount / 40) % 2 == 0) {
+      /*****************************************************************************/
+      /* DrawText("Touch Screen to Start",                                         */
+      /*          SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 30) / 2, */
+      /*          SCREEN_HEIGHT / 2 - 30 + 300, 30, BLANK);                        */
+      /*****************************************************************************/
+    } else {
+      DrawText("Touch Screen to Start",
+               SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 30) / 2,
+               SCREEN_HEIGHT / 2 - 30 + 300, 30, LIGHTGRAY);
+    }
+  }
 }
 
 void UnloadGameplayScreen() {
