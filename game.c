@@ -38,7 +38,7 @@ int main(void) {
   InitAudioDevice();
   currentScreen = TITLE;
   InitTitleScreen();
-  ToggleFullscreen();
+  //ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -87,6 +87,10 @@ static void UpdateTransition(void) {
       case TRANSITION:
         UnloadTransitionScreen();
         break;
+      case LEADERBOARD: {
+        UnloadLeaderBoardScreen();
+        break;
+      }
       default:
         break;
       }
@@ -109,6 +113,10 @@ static void UpdateTransition(void) {
       case TRANSITION:
         InitTransitionScreen();
         break;
+      case LEADERBOARD: {
+        InitLeaderBoardScreen();
+        break;
+      }
       default:
         break;
       }
@@ -141,8 +149,11 @@ void UpdateAndDraw() {
     switch (currentScreen) {
     case TITLE: {
       UpdateTitleScreen();
+      //if (FinishTitleScreen()) {
+      //        TransitionToScreen(TRANSITION);
+      //}
       if (FinishTitleScreen()) {
-        TransitionToScreen(TRANSITION);
+        TransitionToScreen(LEADERBOARD);
       }
       break;
     case GAMEPLAY: {
@@ -179,6 +190,13 @@ void UpdateAndDraw() {
       }
       break;
     }
+      case LEADERBOARD: {
+        UpdateLeaderBoardScreen();
+        if (FinishLeaderBoardScreen()) {
+          TransitionToScreen(TITLE);
+        }
+        break;
+      }
     }
     default:
       break;
@@ -209,6 +227,10 @@ void UpdateAndDraw() {
   }
   case TRANSITION: {
     DrawTransitionScreen();
+    break;
+  }
+  case LEADERBOARD: {
+    DrawLeaderBoardScreen();
     break;
   }
   default:
