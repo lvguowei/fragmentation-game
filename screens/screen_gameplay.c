@@ -227,13 +227,13 @@ void UpdateGameplayScreen() {
         for (int i = 0; i < num_rows; i++) {
           for (int j = 0; j < num_cols; j++) {
             if (brick[i][j].state == HIDDEN) {
-              if (framesCount % 3 == 0) {
+              if (framesCount % 2 == 0) {
                 if (brick[i][j].position.y + brickSize.y / 2 > 0) {
-                  brick[i][j].position.y -= 80;
+                  brick[i][j].position.y -= 50;
 
                 }
                 if (brick[i][j].alpha > 0) {
-                  brick[i][j].alpha -= 0.2;
+                  brick[i][j].alpha -= 0.1;
                 }
               }
             }
