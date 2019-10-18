@@ -187,14 +187,13 @@ void UpdateGameplayScreen() {
       int prevElapseTime = elapsedTime;
       // Calculate elapsed time
       elapsedTime = GetTime() - tutorialBaseTime;
-
-      if (elapsedTime > DURATION) {
+      if (elapsedTime > DURATION ) {
         // Times up!
         finishScreen = true;
       } else {
-        if (elapsedTime >= DURATION - 5 && elapsedTime <= DURATION) {
-          if (elapsedTime == prevElapseTime + 1) {
-            if (elapsedTime == DURATION) {
+        if ((int)elapsedTime >= DURATION - 6 && (int)elapsedTime <= DURATION - 1) {
+          if ((int)elapsedTime == prevElapseTime + 1) {
+            if ((int)elapsedTime == DURATION - 1) {
               PlaySound(beepHighSound);
             } else {
               PlaySound(beepSound);
@@ -205,11 +204,13 @@ void UpdateGameplayScreen() {
         for (int i = 0; i < num_rows; i++) {
           for (int j = 0; j < num_cols; j++) {
             if (brick[i][j].state == PENDING) {
-              if (framesCount % 3 == 0) {
+              if (framesCount % 2 == 0) {
                 brick[i][j].state = HIDDEN;
                 filesCounts[brick[i][j].file]--;
                 score += 5;
-                PlaySound(clickSound);
+                if (framesCount % 6 == 0) {
+                  PlaySound(clickSound);
+                }
                 if (filesCounts[currentFile] == 0) {
                   if (!chooseNextFile()) {
                     finishScreen = true;
@@ -248,6 +249,7 @@ void UpdateGameplayScreen() {
           while (true) {
             if (brick[i][j].file == currentFile &&
                 brick[i][j].state == NORMAL) {
+              PlaySound(clickSound);
               brick[i][j].state = PENDING;
               // go to next grid
               if (j == num_cols - 1) {
@@ -323,7 +325,7 @@ void DrawGameplayScreen() {
   // Draw countdown timer
   Color color;
   Color textColor;
-  if (elapsedTime >= DURATION - 5) {
+  if (elapsedTime >= DURATION - 6) {
     color = TIMER_COLOR_ALARM;
     textColor = TIMER_COLOR_ALARM;
   } else {
