@@ -24,6 +24,7 @@ typedef struct Brick {
   Vector2 position;
   BrickState state;
   int file;
+  double alpha;
 } Brick;
 
 static int framesCount;
@@ -45,7 +46,7 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE, PINK,
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE,RED,
                                             ORANGE};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
@@ -90,7 +91,7 @@ void InitGameplayScreen() {
   } else if (stage == 2) {
     num_rows = 15;
     num_cols = 15;
-    fileChangeRate = 6 * 60;
+    fileChangeRate = 8 * 60;
     InitStage2Background();
     stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
     SetMusicVolume(stage2Music, 1.0f);
@@ -98,7 +99,7 @@ void InitGameplayScreen() {
   } else if (stage == STAGE_NUM) {
     num_rows = 20;
     num_cols = 20;
-    fileChangeRate = 3 * 60;
+    fileChangeRate = 6 * 60;
     InitStage3Background();
     stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
     SetMusicVolume(stage3Music, 1.0f);
@@ -133,6 +134,7 @@ void InitGameplayScreen() {
           (Vector2){j * brickSize.x + brickSize.x / 2 + MARGIN_LEFT,
                     i * brickSize.y + brickSize.y / 2 + MARGIN_TOP};
       brick[i][j].state = NORMAL;
+      brick[i][j].alpha = 1;
       if (rand() % 100 <= 100 - fragmentationLevel) {
         brick[i][j].file = prevFile;
       } else {
@@ -173,11 +175,9 @@ void UpdateGameplayScreen() {
     if (showCountDown) {
       if (GetTime() - countDownBaseTime < 1) {
         countDown = 3;
-      }
-      else if (GetTime() - countDownBaseTime < 2) {
+      } else if (GetTime() - countDownBaseTime < 2) {
         countDown = 2;
-      }
-      else if (GetTime() - countDownBaseTime < 3) {
+      } else if (GetTime() - countDownBaseTime < 3) {
         countDown = 1;
       } else {
         showCountDown = false;
@@ -222,6 +222,22 @@ void UpdateGameplayScreen() {
           }
         }
       end:
+
+        for (int i = 0; i < num_rows; i++) {
+          for (int j = 0; j < num_cols; j++) {
+            if (brick[i][j].state == HIDDEN) {
+              if (framesCount % 3 == 0) {
+                if (brick[i][j].position.y + brickSize.y / 2 > 0) {
+                  brick[i][j].position.y -= 80;
+
+                }
+                if (brick[i][j].alpha > 0) {
+                  brick[i][j].alpha -= 0.2;
+                }
+              }
+            }
+          }
+        }
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
           // Handle brick clicked
@@ -277,15 +293,9 @@ void DrawGameplayScreen() {
   // Draw bricks
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
-      Color color;
-      if (brick[i][j].state == HIDDEN) {
-        color = BLANK;
-      } else {
-        color = FILE_COLORS[brick[i][j].file];
-      }
       DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
                     brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                    brickSize.y, color);
+                    brickSize.y, Fade(FILE_COLORS[brick[i][j].file], brick[i][j].alpha));
     }
   }
 
@@ -350,7 +360,8 @@ void DrawGameplayScreen() {
   if (showCountDown) {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
     const char *cd = FormatText("%d", countDown);
-    DrawText(cd, (SCREEN_WIDTH - MeasureText(cd, 300)) / 2, (SCREEN_HEIGHT - 300) / 2, 300, RAYWHITE);
+    DrawText(cd, (SCREEN_WIDTH - MeasureText(cd, 300)) / 2,
+             (SCREEN_HEIGHT - 300) / 2, 300, RAYWHITE);
   }
 
   // draw tutorial
