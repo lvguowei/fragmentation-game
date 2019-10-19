@@ -46,8 +46,7 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE,RED,
-                                            ORANGE};
+static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE, RED, ORANGE};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
 static int filesCounts[FILE_NUM] = {0};
@@ -187,11 +186,12 @@ void UpdateGameplayScreen() {
       int prevElapseTime = elapsedTime;
       // Calculate elapsed time
       elapsedTime = GetTime() - tutorialBaseTime;
-      if (elapsedTime > DURATION ) {
+      if (elapsedTime > DURATION) {
         // Times up!
         finishScreen = true;
       } else {
-        if ((int)elapsedTime >= DURATION - 6 && (int)elapsedTime <= DURATION - 1) {
+        if ((int)elapsedTime >= DURATION - 6 &&
+            (int)elapsedTime <= DURATION - 1) {
           if ((int)elapsedTime == prevElapseTime + 1) {
             if ((int)elapsedTime == DURATION - 1) {
               PlaySound(beepHighSound);
@@ -230,7 +230,6 @@ void UpdateGameplayScreen() {
               if (framesCount % 2 == 0) {
                 if (brick[i][j].position.y + brickSize.y / 2 > 0) {
                   brick[i][j].position.y -= 50;
-
                 }
                 if (brick[i][j].alpha > 0) {
                   brick[i][j].alpha -= 0.1;
@@ -293,27 +292,47 @@ void DrawGameplayScreen() {
                 Fade(FILE_COLORS[currentFile], 0.3));
 
   // Draw bricks
+  int shadow_thick = brickSize.x / 20;
+  double shadow_alpha = 0.6;
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
       DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
                     brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                    brickSize.y, Fade(FILE_COLORS[brick[i][j].file], brick[i][j].alpha));
+                    brickSize.y,
+                    Fade(FILE_COLORS[brick[i][j].file], brick[i][j].alpha));
+
+      // draw shadow lines
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2,
+                    brick[i][j].position.y - brickSize.y / 2 +
+                        shadow_thick / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
+                    brick[i][j].position.y - brickSize.y / 2 +
+                        shadow_thick / 2},
+          shadow_thick, Fade(WHITE, shadow_alpha));
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
+          shadow_thick, Fade(WHITE, shadow_alpha));
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
+          shadow_thick, Fade(BLACK, shadow_alpha));
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
+                        shadow_thick / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
+                        shadow_thick / 2},
+          shadow_thick, Fade(BLACK, shadow_alpha));
     }
-  }
-
-  // Draw grid
-  for (int i = 0; i <= num_rows; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT, MARGIN_TOP + i * brickSize.y},
-               (Vector2){MARGIN_LEFT + num_cols * brickSize.x,
-                         MARGIN_TOP + i * brickSize.y},
-               6, BLACK);
-  }
-
-  for (int i = 0; i <= num_cols; i++) {
-    DrawLineEx((Vector2){MARGIN_LEFT + i * brickSize.x, MARGIN_TOP},
-               (Vector2){MARGIN_LEFT + i * brickSize.x,
-                         MARGIN_TOP + num_rows * brickSize.y},
-               6, BLACK);
   }
 
   // Draw stage
