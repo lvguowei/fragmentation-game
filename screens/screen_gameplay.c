@@ -46,7 +46,11 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {SKYBLUE, LIME, PURPLE, RED, ORANGE};
+static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, RED, GOLD};
+static const Color FILE_COLORS_DARK[FILE_NUM] = {DARKBLUE, DARKGREEN,
+                                                 DARKPURPLE, MAROON, ORANGE};
+static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
+                                                  YELLOW};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
 static int filesCounts[FILE_NUM] = {0};
@@ -293,7 +297,6 @@ void DrawGameplayScreen() {
 
   // Draw bricks
   int shadow_thick = brickSize.x / 20;
-  double shadow_alpha = 0.6;
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
       DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
@@ -303,27 +306,12 @@ void DrawGameplayScreen() {
 
       // draw shadow lines
       DrawLineEx(
-          (Vector2){brick[i][j].position.x - brickSize.x / 2,
-                    brick[i][j].position.y - brickSize.y / 2 +
-                        shadow_thick / 2},
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
-                    brick[i][j].position.y - brickSize.y / 2 +
-                        shadow_thick / 2},
-          shadow_thick, Fade(WHITE, shadow_alpha));
-      DrawLineEx(
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
-                        shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2},
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
-                        shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
-          shadow_thick, Fade(WHITE, shadow_alpha));
-      DrawLineEx(
           (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
                     brick[i][j].position.y - brickSize.y / 2},
           (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
                     brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
-          shadow_thick, Fade(BLACK, shadow_alpha));
+          shadow_thick,
+          Fade(FILE_COLORS_DARK[brick[i][j].file], brick[i][j].alpha));
       DrawLineEx(
           (Vector2){brick[i][j].position.x - brickSize.x / 2,
                     brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
@@ -331,7 +319,26 @@ void DrawGameplayScreen() {
           (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
                     brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
                         shadow_thick / 2},
-          shadow_thick, Fade(BLACK, shadow_alpha));
+          shadow_thick,
+          Fade(FILE_COLORS_DARK[brick[i][j].file], brick[i][j].alpha));
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2,
+                    brick[i][j].position.y - brickSize.y / 2 +
+                        shadow_thick / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
+                    brick[i][j].position.y - brickSize.y / 2 +
+                        shadow_thick / 2},
+          shadow_thick,
+          Fade(FILE_COLORS_LIGHT[brick[i][j].file], brick[i][j].alpha));
+      DrawLineEx(
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        shadow_thick / 2,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
+          shadow_thick,
+          Fade(FILE_COLORS_LIGHT[brick[i][j].file], brick[i][j].alpha));
     }
   }
 
