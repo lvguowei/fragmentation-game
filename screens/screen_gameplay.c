@@ -296,7 +296,7 @@ void DrawGameplayScreen() {
                 Fade(FILE_COLORS[currentFile], 0.3));
 
   // Draw bricks
-  int shadow_thick = brickSize.x / 20;
+  int shadow_thick = brickSize.x / 25;
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
       DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
