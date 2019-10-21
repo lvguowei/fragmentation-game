@@ -342,6 +342,7 @@ endif
 # Define all source files required
 PROJECT_SOURCE_FILES ?= \
     game.c \
+		screens/leaderboard.c \
     screens/screen_title.c \
     screens/screen_gameplay.c \
     screens/screen_ending.c \

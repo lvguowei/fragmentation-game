@@ -1,42 +1,24 @@
 #include "raylib.h"
 #include "screens.h"
+#include "leaderboard.h"
 #include <stdio.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
 static bool finishScreen;
 static int framesCount;
-
+static Entry *leaderboard_entries;
+static int leaderboard_size;
 void InitLeaderBoardScreen(void) {
   framesCount = 0;
   finishScreen = false;
-
-  FILE *fp;
-  char *line = NULL;
-  size_t len = 0;
-  ssize_t read;
-
-  fp = fopen("data.txt", "r");
-  if (fp != NULL) {
-    while ((read = getline(&line, &len, fp)) != -1) {
-      printf("Retrieved line of length %zu:\n", read);
-      printf("%s", line);
-    }
-  } else {
-    printf("Error\n");
-    printf("%d", errno);
+  leaderboard_entries = read_leaderboard(&leaderboard_size);
+  printf("Read %d entries\n", leaderboard_size);
+  for (int i = 0; i < leaderboard_size; i++ ) {
+    printf("%s\n", (leaderboard_entries + i)->name);
   }
-  /* fclose(fp); */
-  /* if (line) free(line); */
 }
-void UpdateLeaderBoardScreen(void) {
-  framesCount++;
-}
-void DrawLeaderBoardScreen(void) {
-  DrawCircle(100, 100, 100, RED);
-}
-void UnloadLeaderBoardScreen(void){}
-bool FinishLeaderBoardScreen(void){
-  return false;
-}
+void UpdateLeaderBoardScreen(void) { framesCount++; }
+void DrawLeaderBoardScreen(void) { DrawCircle(100, 100, 100, RED); }
+void UnloadLeaderBoardScreen(void) {}
+bool FinishLeaderBoardScreen(void) { return false; }
