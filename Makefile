@@ -346,6 +346,7 @@ PROJECT_SOURCE_FILES ?= \
     screens/screen_gameplay.c \
     screens/screen_ending.c \
 		screens/screen_transition.c \
+		screens/screen_leaderboard.c \
 		screens/stage1_background.c \
     screens/stage2_background.c \
     screens/stage3_background.c

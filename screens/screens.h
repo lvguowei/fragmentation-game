@@ -7,7 +7,13 @@
 #define SCREEN_HEIGHT 1080
 #define STAGE_NUM 3
 
-typedef enum GameScreen { TITLE, GAMEPLAY, ENDING, TRANSITION } GameScreen;
+typedef enum GameScreen {
+  TITLE,
+  GAMEPLAY,
+  ENDING,
+  TRANSITION,
+  LEADERBOARD
+} GameScreen;
 
 // Global variables
 GameScreen currentScreen;
@@ -18,7 +24,7 @@ int score;
 int highestScore;
 
 #ifdef __cplusplus
-extern "C" {            // Prevents name mangling of functions
+extern "C" { // Prevents name mangling of functions
 #endif
 
 //----------------------------------------------------------------------------------
@@ -56,6 +62,15 @@ void UpdateTransitionScreen(void);
 void DrawTransitionScreen(void);
 void UnloadTransitionScreen(void);
 bool FinishTransitionScreen(void);
+
+//----------------------------------------------------------------------------------
+// Leaderboard Screen Functions Declaration
+//----------------------------------------------------------------------------------
+void InitLeaderBoardScreen(void);
+void UpdateLeaderBoardScreen(void);
+void DrawLeaderBoardScreen(void);
+void UnloadLeaderBoardScreen(void);
+bool FinishLeaderBoardScreen(void);
 
 #ifdef __cplusplus
 }
