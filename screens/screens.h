@@ -34,7 +34,7 @@ void InitTitleScreen(void);
 void UpdateTitleScreen(void);
 void DrawTitleScreen(void);
 void UnloadTitleScreen(void);
-bool FinishTitleScreen(void);
+int FinishTitleScreen(void);
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Declaration

@@ -15,16 +15,20 @@ static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
 static Music titleMusic;
 static Sound startSound;
 
-static bool finishScreen;
+static int finishScreen;
 static int framesCount;
 static Rectangle closeButtonRec;
+static Rectangle leaderboardRec;
+Texture2D leaderboard;
 
 void UpdateTitleGridColors();
 
 void InitTitleScreen() {
   framesCount = 0;
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
-  finishScreen = false;
+  leaderboard = LoadTexture("resources/images/leaderboard.png");
+  leaderboardRec = (Rectangle){10, 10, 64, 64};
+  finishScreen = 0;
   titleMusic = LoadMusicStream("resources/music/title.mp3");
   startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(titleMusic);
@@ -41,9 +45,12 @@ void UpdateTitleScreen() {
     Vector2 mousePos = GetMousePosition();
     if (CheckCollisionPointRec(mousePos, closeButtonRec)) {
       quit = true;
-    } else {
+    } else if (CheckCollisionPointRec(mousePos, leaderboardRec)) {
+      finishScreen = 2;
       PlaySound(startSound);
-      finishScreen = true;
+    } else {
+      finishScreen = 1;
+      PlaySound(startSound);
     }
   }
 }
@@ -59,12 +66,12 @@ void DrawTitleScreen() {
   }
 
   int textX = (SCREEN_WIDTH - MeasureText("FRAGMENTATION GAME", 140)) / 2;
-  int textY = (SCREEN_HEIGHT - 140) / 2 - 150;
+  int textY = (SCREEN_HEIGHT - 140) / 2 - 250;
 
   DrawRectangle(0, textY - 80, SCREEN_WIDTH, 140 + 80 * 2, RED);
 
   // Game Title
-  DrawText("FRAGMENTATION GAME", textX, textY, 140, RAYWHITE);
+  DrawText("FRAGMENTATION GAME", textX, textY, 140, WHITE);
 
   // Touch to start
   if ((framesCount / 40) % 2 == 0) {
@@ -84,6 +91,9 @@ void DrawTitleScreen() {
            closeButtonRec.y + closeButtonRec.height, RAYWHITE);
   DrawLine(closeButtonRec.x, closeButtonRec.y + closeButtonRec.height,
            closeButtonRec.x + closeButtonRec.width, closeButtonRec.y, RAYWHITE);
+
+  // leaderboard button
+  DrawTexture(leaderboard, leaderboardRec.x, leaderboardRec.y, YELLOW);
 }
 
 void UnloadTitleScreen() {
@@ -91,7 +101,12 @@ void UnloadTitleScreen() {
   UnloadSound(startSound);
 }
 
-bool FinishTitleScreen() { return finishScreen; }
+/*
+  0 - not finish
+  1 - go to play screen
+  2 - go to leaderboard screen
+ */
+int FinishTitleScreen() { return finishScreen; }
 
 void UpdateTitleGridColors() {
   for (int i = 0; i < TITLE_GRID_ROWS; i++) {

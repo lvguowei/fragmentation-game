@@ -149,11 +149,14 @@ void UpdateAndDraw() {
     switch (currentScreen) {
     case TITLE: {
       UpdateTitleScreen();
-      //if (FinishTitleScreen()) {
-      //        TransitionToScreen(TRANSITION);
-      //}
-      if (FinishTitleScreen()) {
+      int finish_value = FinishTitleScreen();
+      if (finish_value == 1) {
+        TransitionToScreen(GAMEPLAY);
+      } else if (finish_value == 2) {
+#if defined(PLATFORM_WEB)
+#else
         TransitionToScreen(LEADERBOARD);
+#endif
       }
       break;
     case GAMEPLAY: {
