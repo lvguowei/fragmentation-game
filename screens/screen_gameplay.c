@@ -83,8 +83,8 @@ void InitGameplayScreen() {
   beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
 
   if (stage == 1) {
-    num_rows = 10;
-    num_cols = 10;
+    num_rows = 15;
+    num_cols = 20;
     fileChangeRate = 10 * 60;
     InitStage1Background();
     stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
@@ -93,14 +93,14 @@ void InitGameplayScreen() {
     showTutorial = true;
   } else if (stage == 2) {
     num_rows = 15;
-    num_cols = 15;
+    num_cols = 20;
     fileChangeRate = 8 * 60;
     InitStage2Background();
     stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
     SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
-    num_rows = 20;
+    num_rows = 15;
     num_cols = 20;
     fileChangeRate = 6 * 60;
     InitStage3Background();
@@ -111,10 +111,10 @@ void InitGameplayScreen() {
 
   // Set fragmentationLevel based on stage
   if (stage == 1) {
-    fragmentationLevel = 10;
+    fragmentationLevel = 5;
   }
   if (stage == 2) {
-    fragmentationLevel = 50;
+    fragmentationLevel = 20;
   }
   if (stage == 3) {
     fragmentationLevel = 100;
