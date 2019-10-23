@@ -397,7 +397,7 @@ void DrawGameplayScreen() {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
     Rectangle rec = {300, 550, SCREEN_WIDTH - 800, 400};
     DrawTextRec(GetFontDefault(),
-                "<--- Click on the boxes that has the same color as hinted on "
+                "<--- Click on blocks that have the same color as hinted on "
                 "the left.",
                 rec, 60, 5, true, RAYWHITE);
     DrawTriangle((Vector2){10, 60}, (Vector2){120, 560}, (Vector2){120, 640},

@@ -35,9 +35,9 @@ void DrawLeaderBoardScreen(void) {
   DrawRectangle((SCREEN_WIDTH - 1000) / 2 - 40, y, 1000, (50 + 10) * 11 + 40,
                 BLACK);
   int n = leaderboard_size > LIMIT ? LIMIT : leaderboard_size;
-  DrawText("RANK", (SCREEN_WIDTH - 1000) / 2, y, 50, GRAY);
-  DrawText("NAME", (SCREEN_WIDTH - 1000) / 2 + 250, y, 50, GRAY);
-  DrawText("SCORE", (SCREEN_WIDTH - 1000) / 2 + 750, y, 50, GRAY);
+  DrawText("RANK", (SCREEN_WIDTH - 1000) / 2, y, 50, SKYBLUE);
+  DrawText("NAME", (SCREEN_WIDTH - 1000) / 2 + 250, y, 50, SKYBLUE);
+  DrawText("SCORE", (SCREEN_WIDTH - 1000) / 2 + 750, y, 50, SKYBLUE);
   y += 40;
   Color color;
   for (int i = 0; i < n; i++) {
