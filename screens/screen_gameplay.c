@@ -6,7 +6,7 @@
 
 #define MAX_ROWS 100
 #define MAX_COLS 100
-#define DURATION 30
+#define DURATION 3
 #define FILE_NUM 5
 #define ALPHA 40
 #define MARGIN_LEFT 400
