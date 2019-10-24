@@ -209,7 +209,9 @@ void UpdateAndDraw() {
   }
 
   if (IsKeyPressed(KEY_M)) {
-    shouldDrawCursor = !shouldDrawCursor;
+    if (stage != STAGE_NUM) {
+      shouldDrawCursor = !shouldDrawCursor;
+    }
   }
 
   BeginDrawing();

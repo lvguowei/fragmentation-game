@@ -8,5 +8,5 @@ typedef struct {
 } Entry;
 
 Entry* read_leaderboard(int* size);
-
+void save_entry(char name[], char email[], char description[], int score);
 #endif

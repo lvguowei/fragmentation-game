@@ -37,3 +37,11 @@ Entry *read_leaderboard(int *size) {
   *size = entries_len;
   return entries;
 }
+
+void save_entry(char name[], char email[], char description[], int score) {
+  FILE *fp;
+  fp = fopen("data.txt", "a");
+  fprintf(fp, "%s,%s,%s,%d\n", name, email, description, score);
+  fclose(fp);
+}
+
