@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include "screens/backgrounds.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,6 +53,9 @@ int main(void) {
   stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
   stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
   stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
+  InitStage1Background();
+  InitStage2Background();
+  InitStage3Background();
 
   // transition screen
   transitionMusic = LoadMusicStream("resources/music/transition.mp3");
@@ -79,7 +83,7 @@ int main(void) {
   UnloadMusicStream(stage1Music);
   UnloadMusicStream(stage2Music);
   UnloadMusicStream(stage3Music);
-  
+
   UnloadMusicStream(transitionMusic);
   CloseAudioDevice();
   CloseWindow();
@@ -182,7 +186,7 @@ void UpdateAndDraw() {
       UpdateTitleScreen();
       int finish_value = FinishTitleScreen();
       if (finish_value == 1) {
-        TransitionToScreen(GAMEPLAY);
+        TransitionToScreen(TRANSITION);
       } else if (finish_value == 2) {
 #if defined(PLATFORM_WEB)
 #else

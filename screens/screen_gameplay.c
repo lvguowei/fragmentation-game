@@ -79,7 +79,6 @@ void InitGameplayScreen() {
     num_rows = 15;
     num_cols = 20;
     fileChangeRate = 10 * 60;
-    InitStage1Background();
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
     showTutorial = true;
@@ -87,14 +86,12 @@ void InitGameplayScreen() {
     num_rows = 15;
     num_cols = 20;
     fileChangeRate = 8 * 60;
-    InitStage2Background();
     SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     num_rows = 15;
     num_cols = 20;
     fileChangeRate = 6 * 60;
-    InitStage3Background();
     SetMusicVolume(stage3Music, 1.0f);
     PlayMusicStream(stage3Music);
   }
