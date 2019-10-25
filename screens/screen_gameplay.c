@@ -24,6 +24,7 @@ typedef struct Brick {
   Vector2 position;
   BrickState state;
   int file;
+  double timestamp;
   double alpha;
 } Brick;
 
@@ -65,6 +66,7 @@ static Music stage1Music;
 static Music stage2Music;
 static Music stage3Music;
 
+static double lastPlaySound;
 bool chooseNextFile();
 bool allClear();
 
@@ -77,6 +79,8 @@ void InitGameplayScreen() {
   showCountDown = true;
   countDown = 3;
   countDownBaseTime = GetTime();
+
+  lastPlaySound = 0;
 
   clickSound = LoadSound("resources/sounds/click.mp3");
   beepSound = LoadSound("resources/sounds/beep.mp3");
@@ -205,15 +209,17 @@ void UpdateGameplayScreen() {
           }
         }
 
+        
         for (int i = 0; i < num_rows; i++) {
           for (int j = 0; j < num_cols; j++) {
             if (brick[i][j].state == PENDING) {
-              if (framesCount % 2 == 0) {
+              if (brick[i][j].timestamp <= GetTime()) {
                 brick[i][j].state = HIDDEN;
                 filesCounts[brick[i][j].file]--;
                 score += 5;
-                if (framesCount % 6 == 0) {
+                if (GetTime() - lastPlaySound >= 0.1) {
                   PlaySound(clickSound);
+                  lastPlaySound = GetTime();
                 }
                 if (filesCounts[currentFile] == 0) {
                   if (!chooseNextFile()) {
@@ -249,11 +255,14 @@ void UpdateGameplayScreen() {
           int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
           int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
+          double ts =  GetTime();
           while (true) {
             if (brick[i][j].file == currentFile &&
                 brick[i][j].state == NORMAL) {
               PlaySound(clickSound);
               brick[i][j].state = PENDING;
+              brick[i][j].timestamp = ts;
+              ts += 0.05;
               // go to next grid
               if (j == num_cols - 1) {
                 if (i == num_rows - 1) {
