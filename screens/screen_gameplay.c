@@ -210,6 +210,8 @@ void UpdateGameplayScreen() {
                   }
                 }
                 goto end;
+              } else {
+                brick[i][j].alpha = 0.5;
               }
             }
           }
