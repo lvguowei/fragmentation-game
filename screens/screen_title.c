@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "screens.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 #define TITLE_GRID_ROWS 20
 #define TITLE_GRID_COLS 30
@@ -12,25 +13,19 @@ static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
     (Color){66, 13, 9, 180},   (Color){255, 40, 0, 180}};
 
 static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
-static Music titleMusic;
-static Sound startSound;
 
 static int finishScreen;
 static int framesCount;
 static Rectangle closeButtonRec;
 static Rectangle leaderboardRec;
-Texture2D leaderboard;
 
 void UpdateTitleGridColors();
 
 void InitTitleScreen() {
   framesCount = 0;
   closeButtonRec = (Rectangle){SCREEN_WIDTH - 80, 0, 80, 80};
-  leaderboard = LoadTexture("resources/images/leaderboard.png");
   leaderboardRec = (Rectangle){10, 10, 64, 64};
   finishScreen = 0;
-  titleMusic = LoadMusicStream("resources/music/title.mp3");
-  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(titleMusic);
   UpdateTitleGridColors();
 }
@@ -97,8 +92,6 @@ void DrawTitleScreen() {
 }
 
 void UnloadTitleScreen() {
-  UnloadMusicStream(titleMusic);
-  UnloadSound(startSound);
 }
 
 /*

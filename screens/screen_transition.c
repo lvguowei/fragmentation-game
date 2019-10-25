@@ -11,14 +11,10 @@ static char STAGE_2_MESSAGE[] = "After 6 month ...";
 static char STAGE_3_MESSAGE[] = "After 1 year ...";
 static int TEXT_ANIM_SPEED = 10;
 
-static Music transitionMusic;
-static Sound startSound;
 
 void InitTransitionScreen() {
   finishScreen = false;
   framesCount = 0;
-  transitionMusic = LoadMusicStream("resources/music/transition.mp3");
-  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(transitionMusic);
 }
 
@@ -81,8 +77,6 @@ void DrawTransitionScreen() {
 
 void UnloadTransitionScreen() {
   StopMusicStream(transitionMusic);
-  UnloadMusicStream(transitionMusic);
-  UnloadSound(startSound);
 }
 
 bool FinishTransitionScreen() { return finishScreen; }

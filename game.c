@@ -33,9 +33,29 @@ int main(void) {
   highestScore = 0;
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Fragmentation Game");
-
-  cursor = LoadTexture("resources/images/cursor.png");
   InitAudioDevice();
+  cursor = LoadTexture("resources/images/cursor.png");
+
+  // title screen
+  titleMusic = LoadMusicStream("resources/music/title.mp3");
+  startSound = LoadSound("resources/sounds/start.wav");
+  leaderboard = LoadTexture("resources/images/leaderboard.png");
+
+  // ending screen
+  endingMusic = LoadMusicStream("resources/music/ending.mp3");
+
+
+  // gameplay screen
+  clickSound = LoadSound("resources/sounds/click.mp3");
+  beepSound = LoadSound("resources/sounds/beep.mp3");
+  beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
+  stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
+  stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
+  stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
+
+  // transition screen
+  transitionMusic = LoadMusicStream("resources/music/transition.mp3");
+
   currentScreen = TITLE;
   InitTitleScreen();
   //ToggleFullscreen();
@@ -48,9 +68,20 @@ int main(void) {
     UpdateAndDraw();
   }
 #endif
+  UnloadMusicStream(titleMusic);
+  UnloadSound(startSound);
 
+  UnloadMusicStream(endingMusic);
+
+  UnloadSound(clickSound);
+  UnloadSound(beepSound);
+  UnloadSound(beepHighSound);
+  UnloadMusicStream(stage1Music);
+  UnloadMusicStream(stage2Music);
+  UnloadMusicStream(stage3Music);
+  
+  UnloadMusicStream(transitionMusic);
   CloseAudioDevice();
-  // UnloadTexture(cursor);
   CloseWindow();
   return 0;
 }

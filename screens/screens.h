@@ -2,6 +2,7 @@
 #define SCREENS_H
 
 #include <stdbool.h>
+#include "raylib.h"
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
@@ -22,6 +23,30 @@ bool quit;
 bool prize;
 int score;
 int highestScore;
+
+// Resources
+
+Sound startSound;
+
+// Title screen
+Music titleMusic;
+Texture2D leaderboard;
+
+// Ending screen
+Music endingMusic;
+
+// Gameplay screen
+Sound clickSound;
+Sound beepSound;
+Sound beepHighSound;
+Music stage1Music;
+Music stage2Music;
+Music stage3Music;
+
+// Transition screen
+Music transitionMusic;
+
+
 
 #ifdef __cplusplus
 extern "C" { // Prevents name mangling of functions

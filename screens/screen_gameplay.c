@@ -59,12 +59,6 @@ static Vector2 brickSize = {0};
 static int currentFile = 0;
 static int fragmentationLevel = 10; // from 0 - 100
 
-static Sound clickSound;
-static Sound beepSound;
-static Sound beepHighSound;
-static Music stage1Music;
-static Music stage2Music;
-static Music stage3Music;
 
 static double lastPlaySound;
 bool chooseNextFile();
@@ -79,19 +73,13 @@ void InitGameplayScreen() {
   showCountDown = true;
   countDown = 3;
   countDownBaseTime = GetTime();
-
   lastPlaySound = 0;
-
-  clickSound = LoadSound("resources/sounds/click.mp3");
-  beepSound = LoadSound("resources/sounds/beep.mp3");
-  beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
 
   if (stage == 1) {
     num_rows = 15;
     num_cols = 20;
     fileChangeRate = 10 * 60;
     InitStage1Background();
-    stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
     SetMusicVolume(stage1Music, 1.0f);
     PlayMusicStream(stage1Music);
     showTutorial = true;
@@ -100,7 +88,6 @@ void InitGameplayScreen() {
     num_cols = 20;
     fileChangeRate = 8 * 60;
     InitStage2Background();
-    stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
     SetMusicVolume(stage2Music, 1.0f);
     PlayMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
@@ -108,7 +95,6 @@ void InitGameplayScreen() {
     num_cols = 20;
     fileChangeRate = 6 * 60;
     InitStage3Background();
-    stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
     SetMusicVolume(stage3Music, 1.0f);
     PlayMusicStream(stage3Music);
   }
@@ -209,7 +195,6 @@ void UpdateGameplayScreen() {
           }
         }
 
-        
         for (int i = 0; i < num_rows; i++) {
           for (int j = 0; j < num_cols; j++) {
             if (brick[i][j].state == PENDING) {
@@ -255,7 +240,7 @@ void UpdateGameplayScreen() {
           int i = (mousePos.y - MARGIN_TOP) / brickSize.y;
           int j = (mousePos.x - MARGIN_LEFT) / brickSize.x;
 
-          double ts =  GetTime();
+          double ts = GetTime();
           while (true) {
             if (brick[i][j].file == currentFile &&
                 brick[i][j].state == NORMAL) {
@@ -426,21 +411,15 @@ void DrawGameplayScreen() {
 }
 
 void UnloadGameplayScreen() {
-  UnloadSound(clickSound);
-  UnloadSound(beepSound);
-  UnloadSound(beepHighSound);
   if (stage == 1) {
     UnloadStage1Background();
     StopMusicStream(stage1Music);
-    UnloadMusicStream(stage1Music);
   } else if (stage == 2) {
     UnloadStage2Background();
     StopMusicStream(stage2Music);
-    UnloadMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
     UnloadStage3Background();
     StopMusicStream(stage3Music);
-    UnloadMusicStream(stage3Music);
   }
 }
 

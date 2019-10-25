@@ -14,8 +14,6 @@
 
 static bool finishScreen;
 static int framesCount;
-static Music endingMusic;
-static Sound startSound;
 
 static Rectangle playAgainRec;
 static Rectangle nameBoxRec;
@@ -52,8 +50,6 @@ void InitEndingScreen() {
   descriptionBoxRec =
       (Rectangle){(SCREEN_WIDTH - TEXTBOX_WIDTH) / 2, 500 + 100 + 100,
                   TEXTBOX_WIDTH, TEXTBOX_HEIGHT};
-  endingMusic = LoadMusicStream("resources/music/ending.mp3");
-  startSound = LoadSound("resources/sounds/start.wav");
   PlayMusicStream(endingMusic);
 }
 
@@ -250,8 +246,6 @@ void UnloadEndingScreen() {
   description[0] = '\0';
   descriptionLetterCount = 0;
   StopMusicStream(endingMusic);
-  UnloadMusicStream(endingMusic);
-  UnloadSound(startSound);
 }
 
 bool FinishEndingScreen() { return finishScreen; }
