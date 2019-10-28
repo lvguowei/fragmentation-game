@@ -47,10 +47,10 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, RED, GOLD};
+static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, BROWN, GOLD};
 static const Color FILE_COLORS_DARK[FILE_NUM] = {DARKBLUE, DARKGREEN,
-                                                 DARKPURPLE, MAROON, ORANGE};
-static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, PINK,
+                                                 DARKPURPLE, DARKBROWN, ORANGE};
+static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, BEIGE,
                                                   YELLOW};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
