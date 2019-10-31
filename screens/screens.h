@@ -45,7 +45,10 @@ Music stage3Music;
 
 // Transition screen
 Music transitionMusic;
-
+Sound textSound;
+Texture2D newPhone;
+Texture2D usedPhone;
+Texture2D oldPhone;
 
 
 #ifdef __cplusplus

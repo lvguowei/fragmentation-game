@@ -59,10 +59,14 @@ int main(void) {
 
   // transition screen
   transitionMusic = LoadMusicStream("resources/music/transition.mp3");
+  textSound = LoadSound("resources/sounds/text.wav");
+  newPhone = LoadTexture("resources/images/newphone.png");
+  usedPhone = LoadTexture("resources/images/usedphone.png");
+  oldPhone = LoadTexture("resources/images/oldphone.png");
 
   currentScreen = TITLE;
   InitTitleScreen();
-  //ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -75,7 +79,7 @@ int main(void) {
   UnloadStage1Background();
   UnloadStage2Background();
   UnloadStage3Background();
-  
+
   UnloadMusicStream(titleMusic);
   UnloadSound(startSound);
   UnloadMusicStream(endingMusic);
@@ -86,6 +90,7 @@ int main(void) {
   UnloadMusicStream(stage2Music);
   UnloadMusicStream(stage3Music);
   UnloadMusicStream(transitionMusic);
+  UnloadSound(textSound);
   CloseAudioDevice();
   CloseWindow();
   return 0;
