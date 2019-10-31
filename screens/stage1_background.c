@@ -20,14 +20,22 @@ static float scrollingLayer7 = 0.0f;
 static float scrollingLayer8 = 0.0f;
 
 void InitStage1Background() {
-  bgTextureLayer1 = LoadTexture("resources/images/backgrounds/stage1/layer1.png");
-  bgTextureLayer2 = LoadTexture("resources/images/backgrounds/stage1/layer2.png");
-  bgTextureLayer3 = LoadTexture("resources/images/backgrounds/stage1/layer3.png");
-  bgTextureLayer4 = LoadTexture("resources/images/backgrounds/stage1/layer4.png");
-  bgTextureLayer5 = LoadTexture("resources/images/backgrounds/stage1/layer5.png");
-  bgTextureLayer6 = LoadTexture("resources/images/backgrounds/stage1/layer6.png");
-  bgTextureLayer7 = LoadTexture("resources/images/backgrounds/stage1/layer7.png");
-  bgTextureLayer8 = LoadTexture("resources/images/backgrounds/stage1/layer8.png");
+  bgTextureLayer1 =
+      LoadTexture("resources/images/backgrounds/stage1/layer1.png");
+  bgTextureLayer2 =
+      LoadTexture("resources/images/backgrounds/stage1/layer2.png");
+  bgTextureLayer3 =
+      LoadTexture("resources/images/backgrounds/stage1/layer3.png");
+  bgTextureLayer4 =
+      LoadTexture("resources/images/backgrounds/stage1/layer4.png");
+  bgTextureLayer5 =
+      LoadTexture("resources/images/backgrounds/stage1/layer5.png");
+  bgTextureLayer6 =
+      LoadTexture("resources/images/backgrounds/stage1/layer6.png");
+  bgTextureLayer7 =
+      LoadTexture("resources/images/backgrounds/stage1/layer7.png");
+  bgTextureLayer8 =
+      LoadTexture("resources/images/backgrounds/stage1/layer8.png");
 }
 
 void UpdateStage1Background() {
@@ -39,7 +47,7 @@ void UpdateStage1Background() {
   scrollingLayer6 -= 1.2f;
   scrollingLayer7 -= 1.4f;
   scrollingLayer8 -= 1.6f;
-  
+
   if (scrollingLayer1 <= -bgTextureLayer1.width)
     scrollingLayer1 = 0;
   if (scrollingLayer2 <= -bgTextureLayer2.width)

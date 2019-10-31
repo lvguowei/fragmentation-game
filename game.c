@@ -62,7 +62,7 @@ int main(void) {
 
   currentScreen = TITLE;
   InitTitleScreen();
-  ToggleFullscreen();
+  //ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -72,18 +72,19 @@ int main(void) {
     UpdateAndDraw();
   }
 #endif
+  UnloadStage1Background();
+  UnloadStage2Background();
+  UnloadStage3Background();
+  
   UnloadMusicStream(titleMusic);
   UnloadSound(startSound);
-
   UnloadMusicStream(endingMusic);
-
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
   UnloadMusicStream(stage1Music);
   UnloadMusicStream(stage2Music);
   UnloadMusicStream(stage3Music);
-
   UnloadMusicStream(transitionMusic);
   CloseAudioDevice();
   CloseWindow();

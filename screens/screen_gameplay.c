@@ -7,16 +7,17 @@
 #define MAX_ROWS 100
 #define MAX_COLS 100
 #define DURATION 30
-#define FILE_NUM 5
+#define FILE_NUM 4
 #define ALPHA 40
-#define MARGIN_LEFT 400
-#define MARGIN_RIGHT 100
-#define MARGIN_TOP 100
-#define MARGIN_DOWN 100
-#define TIMER_FONT_SIZE 150
+#define MARGIN_LEFT 450
+#define MARGIN_RIGHT 50
+#define MARGIN_TOP 50
+#define MARGIN_DOWN 50
+#define TIMER_FONT_SIZE 100
 #define SCORE_FONT_SIZE 100
 #define STAGE_FONT_SIZE 50
 #define LABEL_FONT_SIZE 30
+#define LEFT_PANEL_WIDTH 400
 
 typedef enum { NORMAL, PENDING, HIDDEN } BrickState;
 
@@ -47,10 +48,10 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, BROWN, GOLD};
+static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, GOLD};
 static const Color FILE_COLORS_DARK[FILE_NUM] = {DARKBLUE, DARKGREEN,
-                                                 DARKPURPLE, DARKBROWN, ORANGE};
-static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE, BEIGE,
+                                                 DARKPURPLE, ORANGE};
+static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE,
                                                   YELLOW};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
@@ -58,7 +59,6 @@ static int filesCounts[FILE_NUM] = {0};
 static Vector2 brickSize = {0};
 static int currentFile = 0;
 static int fragmentationLevel = 10; // from 0 - 100
-
 
 static double lastPlaySound;
 bool chooseNextFile();
@@ -285,8 +285,8 @@ void DrawGameplayScreen() {
   }
 
   // draw hint color
-  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                Fade(FILE_COLORS[currentFile], 0.3));
+  //DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
+  //            Fade(FILE_COLORS[currentFile], 0.3));
 
   // Draw bricks
   int shadow_thick = brickSize.x / 25;
@@ -335,11 +335,13 @@ void DrawGameplayScreen() {
     }
   }
 
+  // Draw left panel background
+  DrawRectangle(0, 0, LEFT_PANEL_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.5));
+
+
   // Draw stage
   const char *sstage = TextFormat("STAGE %d", stage);
-  DrawRectangle(0, 0, MeasureText(sstage, STAGE_FONT_SIZE) + 40,
-                STAGE_FONT_SIZE + 20, Fade(BLACK, 0.2));
-  DrawText(sstage, 20, 10, STAGE_FONT_SIZE, ORANGE);
+  DrawText(sstage, (LEFT_PANEL_WIDTH - MeasureText(sstage, STAGE_FONT_SIZE)) / 2, 10, STAGE_FONT_SIZE, ORANGE);
 
   // Draw countdown timer
   Color color;
@@ -353,8 +355,9 @@ void DrawGameplayScreen() {
   }
   int timerY = LABEL_FONT_SIZE + 150;
 
+  int timer_radius = 100;
   // 180 - 540
-  Vector2 center = (Vector2){160, timerY + 100};
+  Vector2 center = (Vector2){LEFT_PANEL_WIDTH / 2, timerY + 10};
   float startAng = 180;
   float endAng = 540 - (elapsedTime / DURATION) * 360;
   if (endAng < 180)
@@ -365,18 +368,18 @@ void DrawGameplayScreen() {
     t = 0;
   const char *stime = FormatText("%d", t);
 
-  DrawCircleSector(center, 150, 180, 540, 200, Fade(color, 0.2));
-  DrawCircleSector(center, 150, startAng, endAng, 200, Fade(color, 0.6));
+  DrawCircleSector(center, timer_radius, 180, 540, 200, Fade(color, 0.2));
+  DrawCircleSector(center, timer_radius, startAng, endAng, 200, Fade(color, 0.6));
   DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
   // Draw score
-  int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 100;
-  DrawText("SCORE", 10, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
+  int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 30;
+  DrawText("SCORE", (LEFT_PANEL_WIDTH - MeasureText("SCORE", LABEL_FONT_SIZE)) / 2, scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
   char sscore[32];
   sprintf(sscore, "%d", score);
   int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
-  DrawText(sscore, 10, scoreY, SCORE_FONT_SIZE, SKYBLUE);
+  DrawText(sscore, (LEFT_PANEL_WIDTH - MeasureText(sscore, SCORE_FONT_SIZE)) / 2, scoreY, SCORE_FONT_SIZE, SKYBLUE);
 
   if (showCountDown) {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
@@ -388,9 +391,9 @@ void DrawGameplayScreen() {
   // draw tutorial
   if (showTutorial) {
     DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.8));
-    Rectangle rec = {300, 550, SCREEN_WIDTH - 800, 400};
+    Rectangle rec = {400, 400, SCREEN_WIDTH - 800, 400};
     DrawTextRec(GetFontDefault(),
-                "<--- Click on blocks that have the same color as hinted on "
+                "<--- Click on file blocks that have the same color as hinted on "
                 "the left.",
                 rec, 60, 5, true, RAYWHITE);
     DrawTriangle((Vector2){10, 60}, (Vector2){120, 560}, (Vector2){120, 640},
@@ -398,26 +401,25 @@ void DrawGameplayScreen() {
 
     if ((framesCount / 40) % 2 == 0) {
       DrawText("Touch Screen to Start",
-               SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 30) / 2,
-               SCREEN_HEIGHT / 2 - 30 + 300, 30, LIGHTGRAY);
+               SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 60) / 2,
+               SCREEN_HEIGHT / 2 - 60 + 300, 60, LIGHTGRAY);
     }
   }
 
   // Draw current file
-  DrawText("Pick color", 10, SCREEN_HEIGHT / 2 - 50, LABEL_FONT_SIZE,
+  DrawText("READ FILE", (LEFT_PANEL_WIDTH - MeasureText("READ FILE", LABEL_FONT_SIZE)) / 2, SCREEN_HEIGHT / 2 - 200, LABEL_FONT_SIZE,
            FILE_COLORS[currentFile]);
-  DrawRectangle(10, SCREEN_HEIGHT / 2, 200, 150, FILE_COLORS[currentFile]);
+  int w = 280;
+  int h = 150;
+  DrawRectangle((LEFT_PANEL_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2 - 60, w, h, FILE_COLORS[currentFile]);
 }
 
 void UnloadGameplayScreen() {
   if (stage == 1) {
-    UnloadStage1Background();
     StopMusicStream(stage1Music);
   } else if (stage == 2) {
-    UnloadStage2Background();
     StopMusicStream(stage2Music);
   } else if (stage == STAGE_NUM) {
-    UnloadStage3Background();
     StopMusicStream(stage3Music);
   }
 }
