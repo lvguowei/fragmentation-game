@@ -14,8 +14,8 @@
 #define MARGIN_TOP 100
 #define MARGIN_DOWN 100
 #define TIMER_FONT_SIZE 100
-#define SCORE_FONT_SIZE 100
-#define STAGE_FONT_SIZE 50
+#define SCORE_FONT_SIZE 80
+#define STAGE_FONT_SIZE 30
 #define LABEL_FONT_SIZE 30
 #define LEFT_PANEL_WIDTH 400
 
@@ -56,6 +56,8 @@ static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE,
 
 static Brick brick[MAX_ROWS][MAX_COLS];
 static int filesCounts[FILE_NUM] = {0};
+static int filesTotalCounts[FILE_NUM] = {0};
+static int files[FILE_NUM] = {0};
 static Vector2 brickSize = {0};
 static int currentFile = 0;
 static int fragmentationLevel = 10; // from 0 - 100
@@ -114,6 +116,8 @@ void InitGameplayScreen() {
   // Init files counts
   for (int i = 0; i < FILE_NUM; i++) {
     filesCounts[i] = 0;
+    files[i] = 0;
+    filesTotalCounts[i] = 0;
   }
 
   // Generate a bricks map
@@ -133,6 +137,9 @@ void InitGameplayScreen() {
         prevFile = file;
       }
       filesCounts[brick[i][j].file]++;
+      filesTotalCounts[brick[i][j].file]++;
+      // mark file exists
+      files[brick[i][j].file] = 1;
     }
   }
 
@@ -339,7 +346,7 @@ void DrawGameplayScreen() {
   DrawRectangle(0, 0, LEFT_PANEL_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.6));
 
   // Draw stage
-  const char *sstage = TextFormat("STAGE %d", stage);
+  const char *sstage = TextFormat("Stage %d", stage);
   DrawText(sstage,
            (LEFT_PANEL_WIDTH - MeasureText(sstage, STAGE_FONT_SIZE)) / 2, 10,
            STAGE_FONT_SIZE, ORANGE);
@@ -375,11 +382,27 @@ void DrawGameplayScreen() {
   DrawText(stime, center.x - MeasureText(stime, TIMER_FONT_SIZE) / 2,
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
+  // Draw progress
+  DrawText("Progress", (LEFT_PANEL_WIDTH - MeasureText("Progress", LABEL_FONT_SIZE)) / 2, 650, LABEL_FONT_SIZE, WHITE);
+
+  int margin = 20;
+  int height = 20;
+  int width = LEFT_PANEL_WIDTH - 2 * margin;
+  int y = 650;
+  for (int i = 0; i < FILE_NUM; i++) {
+    if (files[i] == 1) {
+      y += 50;
+      DrawRectangleLines(margin, y, width, height, FILE_COLORS[i]);
+      DrawRectangle(margin, y, width, height, Fade(FILE_COLORS[i], 0.3));
+      DrawRectangle(margin, y, width * (1 - (float) filesCounts[i] / filesTotalCounts[i]), height, FILE_COLORS[i]);
+    }
+  }
+
   // Draw score
   int scoreLableY = SCREEN_HEIGHT - LABEL_FONT_SIZE - SCORE_FONT_SIZE - 30;
-  DrawText("SCORE",
-           (LEFT_PANEL_WIDTH - MeasureText("SCORE", LABEL_FONT_SIZE)) / 2,
-           scoreLableY, LABEL_FONT_SIZE, SKYBLUE);
+  DrawText("Score",
+           (LEFT_PANEL_WIDTH - MeasureText("Score", LABEL_FONT_SIZE)) / 2,
+           scoreLableY, LABEL_FONT_SIZE, WHITE);
   char sscore[32];
   sprintf(sscore, "%d", score);
   int scoreY = scoreLableY + LABEL_FONT_SIZE + 30;
@@ -393,6 +416,8 @@ void DrawGameplayScreen() {
     DrawText(cd, (SCREEN_WIDTH - MeasureText(cd, 300)) / 2,
              (SCREEN_HEIGHT - 300) / 2, 300, RAYWHITE);
   }
+
+  
 
   // draw tutorial
   if (showTutorial) {
@@ -414,9 +439,9 @@ void DrawGameplayScreen() {
   }
 
   // Draw current file
-  DrawText("READ FILE",
-           (LEFT_PANEL_WIDTH - MeasureText("READ FILE", LABEL_FONT_SIZE)) / 2,
-           SCREEN_HEIGHT / 2 - 200, LABEL_FONT_SIZE, FILE_COLORS[currentFile]);
+  DrawText("Read File",
+           (LEFT_PANEL_WIDTH - MeasureText("Read File", LABEL_FONT_SIZE)) / 2,
+           SCREEN_HEIGHT / 2 - 200, LABEL_FONT_SIZE, WHITE);
   int w = 280;
   int h = 150;
   DrawRectangle((LEFT_PANEL_WIDTH - w) / 2, (SCREEN_HEIGHT - h) / 2 - 60, w, h,
