@@ -9,11 +9,29 @@ static int framesCount;
 static char STAGE_1_MESSAGE[] = "New phone.\nVery fast!";
 static char STAGE_2_MESSAGE[] = "Used phone.\nKinda OK...";
 static char STAGE_3_MESSAGE[] = "Old phone.\nVery sluggish... ";
-static int TEXT_ANIM_SPEED = 10;
+
+static int animSpeed;
 
 void InitTransitionScreen() {
   finishScreen = false;
   framesCount = 0;
+  switch (stage) {
+  case 0: {
+    animSpeed = 5;
+    break;
+  }
+  case 1: {
+    animSpeed = 8;
+    break;
+  }
+  case 2: {
+    animSpeed = 10;
+    break;
+  }
+default:
+  animSpeed = 3;
+    break;
+  }
   PlayMusicStream(transitionMusic);
 }
 
@@ -39,29 +57,29 @@ void UpdateTransitionScreen() {
     break;
   }
 
-  if (framesCount % TEXT_ANIM_SPEED == 0 &&
-      framesCount / TEXT_ANIM_SPEED <= (int)strlen(msg)) {
+  if (framesCount % animSpeed == 0 &&
+      framesCount / animSpeed <= (int)strlen(msg)) {
     PlaySound(textSound);
   }
 
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     switch (stage) {
     case 0: {
-      if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_1_MESSAGE)) {
+      if (framesCount / animSpeed > (int)strlen(STAGE_1_MESSAGE)) {
         PlaySound(startSound);
         finishScreen = true;
       }
       break;
     }
     case 1: {
-      if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_2_MESSAGE)) {
+      if (framesCount / animSpeed > (int)strlen(STAGE_2_MESSAGE)) {
         PlaySound(startSound);
         finishScreen = true;
       }
       break;
     }
     case 2: {
-      if (framesCount / TEXT_ANIM_SPEED > (int)strlen(STAGE_3_MESSAGE)) {
+      if (framesCount / animSpeed > (int)strlen(STAGE_3_MESSAGE)) {
         PlaySound(startSound);
         finishScreen = true;
       }
@@ -97,7 +115,7 @@ void DrawTransitionScreen() {
     pic = newPhone;
     break;
   }
-  DrawText(TextSubtext(msg, 0, framesCount / TEXT_ANIM_SPEED),
+  DrawText(TextSubtext(msg, 0, framesCount / animSpeed),
            SCREEN_WIDTH / 2 - MeasureText(msg, FONT_SIZE) / 2 - 400,
            SCREEN_HEIGHT / 2 - FONT_SIZE, FONT_SIZE, GRAY);
 
