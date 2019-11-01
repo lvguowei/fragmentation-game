@@ -7,7 +7,7 @@
 #define TITLE_GRID_COLS 60
 #define TITLE_COLOR_NUM 6
 #define TITLE_FONT_SIZE 200
-#define SUBTITLE_FONT_SIZE 50
+#define SUBTITLE_FONT_SIZE 80
 
 static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
     (Color){147, 58, 22, 180}, (Color){141, 2, 31, 180},
@@ -76,17 +76,17 @@ void DrawTitleScreen() {
   DrawText(title, textX, textY, TITLE_FONT_SIZE, WHITE);
 
   // sub title
-  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, SUBTITLE_FONT_SIZE)) / 2, 500, SUBTITLE_FONT_SIZE, RAYWHITE);
+  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, SUBTITLE_FONT_SIZE)) / 2, 600, SUBTITLE_FONT_SIZE, RAYWHITE);
 
   // Touch to start
   if ((framesCount / 40) % 2 == 0) {
     DrawText("Touch Screen to Start",
-             SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
-             SCREEN_HEIGHT / 2 - 80 + 400, 80, BLANK);
+             SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 60) / 2,
+             SCREEN_HEIGHT / 2 - 60 + 400, 60, BLANK);
   } else {
     DrawText("Touch Screen to Start",
-             SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
-             SCREEN_HEIGHT / 2 - 80 + 400, 80, RAYWHITE);
+             SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 60) / 2,
+             SCREEN_HEIGHT / 2 - 60 + 400, 60, RAYWHITE);
   }
 
   // Close button
