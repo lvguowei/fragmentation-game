@@ -3,14 +3,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define TITLE_GRID_ROWS 20
-#define TITLE_GRID_COLS 30
+#define TITLE_GRID_ROWS 30
+#define TITLE_GRID_COLS 60
 #define TITLE_COLOR_NUM 6
+#define TITLE_FONT_SIZE 200
 
 static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
     (Color){147, 58, 22, 180}, (Color){141, 2, 31, 180},
     (Color){94, 25, 20, 180},  (Color){184, 15, 10, 180},
     (Color){66, 13, 9, 180},   (Color){255, 40, 0, 180}};
+
+static const char *title = "Frag Fighter";
 
 static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
 
@@ -52,31 +55,34 @@ void UpdateTitleScreen() {
 
 void DrawTitleScreen() {
   // Draw grid anim
-  int w = SCREEN_WIDTH / TITLE_GRID_COLS;
-  int h = SCREEN_HEIGHT / TITLE_GRID_ROWS;
+  double w = (double)SCREEN_WIDTH / TITLE_GRID_COLS;
+  double h = (double)SCREEN_HEIGHT / TITLE_GRID_ROWS;
   for (int i = 0; i < TITLE_GRID_ROWS; i++) {
     for (int j = 0; j < TITLE_GRID_COLS; j++) {
       DrawRectangle(j * w, i * h, w, h, titleColors[i][j]);
     }
   }
 
-  int textX = (SCREEN_WIDTH - MeasureText("FRAGMENTATION GAME", 140)) / 2;
-  int textY = (SCREEN_HEIGHT - 140) / 2 - 250;
+  int textX = (SCREEN_WIDTH - MeasureText(title, TITLE_FONT_SIZE)) / 2;
+  int textY = (SCREEN_HEIGHT - TITLE_FONT_SIZE) / 2 - 250;
 
-  DrawRectangle(0, textY - 80, SCREEN_WIDTH, 140 + 80 * 2, RED);
+  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7));
+
+  DrawRectangle(200, textY - 80, SCREEN_WIDTH - 400, TITLE_FONT_SIZE + 80 * 2, RED);
 
   // Game Title
-  DrawText("FRAGMENTATION GAME", textX, textY, 140, WHITE);
+  //DrawTextEx(GetFontDefault(), title, (Vector2) {textX, textY}, TITLE_FONT_SIZE, 6, WHITE);
+  DrawText(title, textX, textY, TITLE_FONT_SIZE, WHITE);
 
   // Touch to start
   if ((framesCount / 40) % 2 == 0) {
     DrawText("Touch Screen to Start",
              SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
-             SCREEN_HEIGHT / 2 - 80 + 300, 80, BLANK);
+             SCREEN_HEIGHT / 2 - 80 + 400, 80, BLANK);
   } else {
     DrawText("Touch Screen to Start",
              SCREEN_WIDTH / 2 - MeasureText("Touch Screen to Start", 80) / 2,
-             SCREEN_HEIGHT / 2 - 80 + 300, 80, RAYWHITE);
+             SCREEN_HEIGHT / 2 - 80 + 400, 80, RAYWHITE);
   }
 
   // Close button
