@@ -6,9 +6,9 @@
 
 static int finishScreen;
 static int framesCount;
-static char STAGE_1_MESSAGE[] = "New phone.\nVery fast!";
-static char STAGE_2_MESSAGE[] = "Used phone.\nKinda OK...";
-static char STAGE_3_MESSAGE[] = "Old phone.\nVery sluggish... ";
+static char STAGE_1_MESSAGE[] = "New phone.\nReading files \nis a piece of cake!";
+static char STAGE_2_MESSAGE[] = "Used phone.\nFiles start to \nget fragmented...\n";
+static char STAGE_3_MESSAGE[] = "Old phone.\nFiles are so \nfragmented!";
 
 static int animSpeed;
 
@@ -115,9 +115,8 @@ void DrawTransitionScreen() {
     pic = newPhone;
     break;
   }
-  DrawText(TextSubtext(msg, 0, framesCount / animSpeed),
-           SCREEN_WIDTH / 2 - MeasureText(msg, FONT_SIZE) / 2 - 400,
-           SCREEN_HEIGHT / 2 - FONT_SIZE, FONT_SIZE, GRAY);
+  Rectangle rec = {200, 300, 1200, 1000};
+  DrawTextRec(GetFontDefault(), TextSubtext(msg, 0, framesCount / animSpeed), rec, FONT_SIZE, 6, true, DARKGRAY);
 
   DrawTexture(pic,
               SCREEN_WIDTH / 2 + MeasureText(msg, FONT_SIZE) / 2 - 400 + 300,
