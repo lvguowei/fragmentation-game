@@ -92,6 +92,8 @@ void UpdateTransitionScreen() {
 }
 
 void DrawTransitionScreen() {
+  ClearBackground(RAYWHITE);
+
   char *msg;
   Texture2D pic;
   switch (stage) {
@@ -115,12 +117,19 @@ void DrawTransitionScreen() {
     pic = newPhone;
     break;
   }
+
+  DrawTexture(background, 0, 0, Fade(WHITE, 0.5));
+
   Rectangle rec = {200, 300, 1200, 1000};
-  DrawTextRec(GetFontDefault(), TextSubtext(msg, 0, framesCount / animSpeed), rec, FONT_SIZE, 6, true, DARKGRAY);
+
+  DrawRectangle(100, 200, 1200, 800, BLACK);
+  DrawRectangleLinesEx((Rectangle) {100, 200, 1200, 800}, 10, PINK);
+
+  DrawTextRec(GetFontDefault(), TextSubtext(msg, 0, framesCount / animSpeed), rec, FONT_SIZE, 6, true, GREEN);
 
   DrawTexture(pic,
-              SCREEN_WIDTH / 2 + MeasureText(msg, FONT_SIZE) / 2 - 400 + 300,
-              SCREEN_HEIGHT / 2 - 300, WHITE);
+              1400,
+              300, RAYWHITE);
 }
 
 void UnloadTransitionScreen() { StopMusicStream(transitionMusic); }

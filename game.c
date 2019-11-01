@@ -63,6 +63,7 @@ int main(void) {
   newPhone = LoadTexture("resources/images/newphone.png");
   usedPhone = LoadTexture("resources/images/usedphone.png");
   oldPhone = LoadTexture("resources/images/oldphone.png");
+  background = LoadTexture("resources/images/bg.png");
 
   currentScreen = TITLE;
   InitTitleScreen();

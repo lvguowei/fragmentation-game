@@ -49,6 +49,7 @@ Sound textSound;
 Texture2D newPhone;
 Texture2D usedPhone;
 Texture2D oldPhone;
+Texture2D background;
 
 
 #ifdef __cplusplus
