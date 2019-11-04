@@ -63,8 +63,9 @@ static int currentFile = 0;
 static int fragmentationLevel = 10; // from 0 - 100
 
 static double lastPlaySound;
-bool chooseNextFile();
-bool allClear();
+bool chooseNextFile(void);
+bool allClear(void);
+void finish(void);
 
 void InitGameplayScreen() {
   finishScreen = false;
@@ -186,7 +187,7 @@ void UpdateGameplayScreen() {
       elapsedTime = GetTime() - tutorialBaseTime;
       if (elapsedTime > DURATION) {
         // Times up!
-        finishScreen = true;
+        finish();
       } else {
         if ((int)elapsedTime >= DURATION - 6 &&
             (int)elapsedTime <= DURATION - 1) {
@@ -212,7 +213,7 @@ void UpdateGameplayScreen() {
                 }
                 if (filesCounts[currentFile] == 0) {
                   if (!chooseNextFile()) {
-                    finishScreen = true;
+                    finish();
                     goto end;
                   }
                 }
@@ -274,7 +275,7 @@ void UpdateGameplayScreen() {
         // update current file
         if (framesCount % fileChangeRate == 0) {
           if (!chooseNextFile()) {
-            finishScreen = true;
+            finish();
           }
         }
       }
@@ -483,4 +484,9 @@ bool chooseNextFile() {
   }
   currentFile = result;
   return true;
+}
+
+void finish(void) {
+  finishScreen = true;
+  score += (DURATION - elapsedTime) * 5;
 }

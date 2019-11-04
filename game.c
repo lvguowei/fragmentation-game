@@ -67,7 +67,7 @@ int main(void) {
 
   currentScreen = TITLE;
   InitTitleScreen();
-  ToggleFullscreen();
+  //ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
