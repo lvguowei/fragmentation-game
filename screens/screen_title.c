@@ -14,7 +14,6 @@ static const Color TITLE_COLORS[TITLE_COLOR_NUM] = {
     (Color){94, 25, 20, 180},  (Color){184, 15, 10, 180},
     (Color){66, 13, 9, 180},   (Color){255, 40, 0, 180}};
 
-static const char *title = "Frag Fighter";
 static const char *subtitle = "Time to fight files fragmentation!";
 static Color titleColors[TITLE_GRID_ROWS][TITLE_GRID_COLS] = {0};
 
@@ -75,7 +74,7 @@ void DrawTitleScreen() {
   DrawTexture(gameTitle, (SCREEN_WIDTH - gameTitle.width) / 2, 200, WHITE);
 
   // sub title
-  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, SUBTITLE_FONT_SIZE)) / 2, 600, SUBTITLE_FONT_SIZE, RAYWHITE);
+  DrawText(subtitle, (SCREEN_WIDTH - MeasureText(subtitle, SUBTITLE_FONT_SIZE)) / 2, 520, SUBTITLE_FONT_SIZE, RAYWHITE);
 
   // Touch to start
   if ((framesCount / 40) % 2 == 0) {
