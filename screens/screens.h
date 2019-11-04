@@ -31,6 +31,8 @@ Sound startSound;
 // Title screen
 Music titleMusic;
 Texture2D leaderboard;
+// http://arcade.photonstorm.com/ king of fighers 2003
+Texture2D gameTitle;
 
 // Ending screen
 Music endingMusic;

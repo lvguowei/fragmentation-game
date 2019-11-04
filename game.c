@@ -41,6 +41,7 @@ int main(void) {
   titleMusic = LoadMusicStream("resources/music/title.mp3");
   startSound = LoadSound("resources/sounds/start.wav");
   leaderboard = LoadTexture("resources/images/leaderboard.png");
+  gameTitle = LoadTexture("resources/images/title.png");
 
   // ending screen
   endingMusic = LoadMusicStream("resources/music/ending.mp3");
@@ -67,7 +68,7 @@ int main(void) {
 
   currentScreen = TITLE;
   InitTitleScreen();
-  //ToggleFullscreen();
+  ToggleFullscreen();
   HideCursor();
 #if defined(PLATFORM_WEB)
   emscripten_set_main_loop(UpdateAndDraw, 0, 1);
@@ -80,6 +81,7 @@ int main(void) {
   UnloadStage1Background();
   UnloadStage2Background();
   UnloadStage3Background();
+  UnloadTexture(gameTitle);
 
   UnloadMusicStream(titleMusic);
   UnloadSound(startSound);
