@@ -38,28 +38,29 @@ int main(void) {
   cursor = LoadTexture("resources/images/cursor.png");
 
   // title screen
-  titleMusic = LoadMusicStream("resources/music/title.mp3");
+  titleMusic = LoadMusicStream("resources/music/title.ogg");
   startSound = LoadSound("resources/sounds/start.wav");
   leaderboard = LoadTexture("resources/images/leaderboard.png");
   gameTitle = LoadTexture("resources/images/title.png");
 
   // ending screen
-  endingMusic = LoadMusicStream("resources/music/ending.mp3");
+  endingMusic = LoadMusicStream("resources/music/ending.ogg");
 
 
   // gameplay screen
   clickSound = LoadSound("resources/sounds/click.mp3");
   beepSound = LoadSound("resources/sounds/beep.mp3");
   beepHighSound = LoadSound("resources/sounds/beep_high.mp3");
-  stage1Music = LoadMusicStream("resources/music/stage1_music.mp3");
-  stage2Music = LoadMusicStream("resources/music/stage2_music.mp3");
-  stage3Music = LoadMusicStream("resources/music/stage3_music.mp3");
+  stage1Music = LoadMusicStream("resources/music/stage1_music.ogg");
+  stage2Music = LoadMusicStream("resources/music/stage2_music.ogg");
+  stage3Music = LoadMusicStream("resources/music/stage3_music.ogg");
   InitStage1Background();
   InitStage2Background();
   InitStage3Background();
 
+
   // transition screen
-  transitionMusic = LoadMusicStream("resources/music/transition.mp3");
+  transitionMusic = LoadMusicStream("resources/music/transition.ogg");
   textSound = LoadSound("resources/sounds/text.wav");
   newPhone = LoadTexture("resources/images/newphone.png");
   usedPhone = LoadTexture("resources/images/usedphone.png");
@@ -86,6 +87,7 @@ int main(void) {
   UnloadMusicStream(titleMusic);
   UnloadSound(startSound);
   UnloadMusicStream(endingMusic);
+
   UnloadSound(clickSound);
   UnloadSound(beepSound);
   UnloadSound(beepHighSound);
