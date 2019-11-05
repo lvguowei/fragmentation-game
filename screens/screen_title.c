@@ -63,12 +63,11 @@ void DrawTitleScreen() {
     }
   }
 
-  //int textX = (SCREEN_WIDTH - MeasureText(title, TITLE_FONT_SIZE)) / 2;
   int textY = (SCREEN_HEIGHT - TITLE_FONT_SIZE) / 2 - 250;
 
   DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Fade(BLACK, 0.7));
 
-  DrawRectangleRounded((Rectangle) {200, textY - 80, SCREEN_WIDTH - 400, 300}, 0.2, 100, RED);
+  DrawRectangleRounded((Rectangle) {150, textY - 100, SCREEN_WIDTH - 300, 350}, 0.2, 100, RED);
 
   // Game Title
   DrawTexture(gameTitle, (SCREEN_WIDTH - gameTitle.width) / 2, 200, WHITE);
