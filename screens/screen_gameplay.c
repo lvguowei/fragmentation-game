@@ -293,12 +293,8 @@ void DrawGameplayScreen() {
   }
 
   // draw hint color
-  DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
-                Fade(FILE_COLORS[currentFile], 0.3));
-
-  // draw grid bg color
-  //DrawRectangle(MARGIN_LEFT, MARGIN_TOP, brickSize.x * num_cols,
-  //brickSize.y * num_rows, Fade(BLACK, 0.5));
+  /* DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, */
+  /*               Fade(FILE_COLORS[currentFile], 0.3)); */
 
   // Draw bricks
   int shadow_thick = brickSize.x / 25;
@@ -306,6 +302,23 @@ void DrawGameplayScreen() {
   Color conn_color = Fade(WHITE, 0.8);
   int conn_thick_h = 4;
   int conn_thick_v = 2;
+
+  // draw grid bg color
+  int border_thick = 20;
+  DrawRectangle(MARGIN_LEFT, MARGIN_TOP, brickSize.x * num_cols,
+                brickSize.y * num_rows, Fade(BLACK, 0.7));
+  if ((framesCount / 40) % 2 == 0) {
+    DrawRectangleLinesEx(
+                         (Rectangle){MARGIN_LEFT - border_thick, MARGIN_TOP - border_thick,
+                                       brickSize.x * num_cols + 2*border_thick, brickSize.y * num_rows + 2*border_thick},
+                         border_thick, FILE_COLORS[currentFile]);
+  } else {
+    DrawRectangleLinesEx(
+                         (Rectangle){MARGIN_LEFT - border_thick, MARGIN_TOP - border_thick,
+                                       brickSize.x * num_cols + 2*border_thick, brickSize.y * num_rows + 2*border_thick},
+                         border_thick, Fade(FILE_COLORS[currentFile], 0.5));
+  }
+
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
       // draw grid bg
