@@ -329,7 +329,7 @@ void DrawGameplayScreen() {
     for (int j = 0; j < num_cols; j++) {
       Color conn_color_h;
       if (brick[i][j].state == PENDING) {
-        conn_color_h = FILE_COLORS[brick[i][j].file];
+        conn_color_h = FILE_COLORS_LIGHT[brick[i][j].file];
       } else {
         conn_color_h = empty_color;
       }
