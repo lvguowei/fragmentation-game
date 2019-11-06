@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define FONT_SIZE 120
-#define ANIM_SPEED 10
+#define ANIM_SPEED 8
 
 static int finishScreen;
 static int framesCount;

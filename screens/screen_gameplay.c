@@ -296,48 +296,148 @@ void DrawGameplayScreen() {
   DrawRectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT,
                 Fade(FILE_COLORS[currentFile], 0.3));
 
+  // draw grid bg color
+  //DrawRectangle(MARGIN_LEFT, MARGIN_TOP, brickSize.x * num_cols,
+  //brickSize.y * num_rows, Fade(BLACK, 0.5));
+
   // Draw bricks
   int shadow_thick = brickSize.x / 25;
+  int inner_margin = brickSize.x / 10;
+  Color conn_color = Fade(WHITE, 0.8);
+  int conn_thick_h = 4;
+  int conn_thick_v = 2;
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
-      DrawRectangle(brick[i][j].position.x - brickSize.x / 2,
-                    brick[i][j].position.y - brickSize.y / 2, brickSize.x,
-                    brickSize.y,
+      // draw grid bg
+      DrawRectangle(MARGIN_LEFT + j * brickSize.x + inner_margin,
+                    MARGIN_TOP + i * brickSize.y + inner_margin,
+                    brickSize.x - 2 * inner_margin,
+                    brickSize.y - 2 * inner_margin, Fade(conn_color, 0.5));
+
+      if (j != 0) {
+        // right
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) / 3},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) / 3},
+                   conn_thick_h, conn_color);
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) * 2 / 3},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) * 2 / 3},
+                   conn_thick_h, conn_color);
+      }
+
+      if (j != num_cols - 1) {
+        // left
+        DrawLineEx((Vector2){MARGIN_LEFT + (j + 1) * brickSize.x - inner_margin,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) / 3},
+                   (Vector2){MARGIN_LEFT + (j + 1) * brickSize.x,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) / 3},
+                   conn_thick_h, conn_color);
+        DrawLineEx((Vector2){MARGIN_LEFT + (j + 1) * brickSize.x - inner_margin,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) * 2 / 3},
+                   (Vector2){MARGIN_LEFT + (j + 1) * brickSize.x,
+                             MARGIN_TOP + i * brickSize.y + inner_margin +
+                                 (brickSize.y - 2 * inner_margin) * 2 / 3},
+                   conn_thick_h, conn_color);
+      }
+
+      if (i != 0) {
+        // top
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) / 3,
+                             MARGIN_TOP + i * brickSize.y},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) / 3,
+                             MARGIN_TOP + i * brickSize.y + inner_margin},
+                   conn_thick_v, conn_color);
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) * 2 / 3,
+                             MARGIN_TOP + i * brickSize.y},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) * 2 / 3,
+                             MARGIN_TOP + i * brickSize.y + inner_margin},
+                   conn_thick_v, conn_color);
+      }
+
+      if (i != num_rows - 1) {
+        // down
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) / 3,
+                             MARGIN_TOP + (i + 1) * brickSize.y - inner_margin},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) / 3,
+                             MARGIN_TOP + (i + 1) * brickSize.y},
+                   conn_thick_v, conn_color);
+        DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) * 2 / 3,
+                             MARGIN_TOP + (i + 1) * brickSize.y - inner_margin},
+                   (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
+                                 (brickSize.x - 2 * inner_margin) * 2 / 3,
+                             MARGIN_TOP + (i + 1) * brickSize.y},
+                   conn_thick_v, conn_color);
+      }
+
+      DrawRectangle(brick[i][j].position.x - brickSize.x / 2 + inner_margin,
+                    brick[i][j].position.y - brickSize.y / 2 + inner_margin,
+                    brickSize.x - inner_margin * 2,
+                    brickSize.y - inner_margin * 2,
                     Fade(FILE_COLORS[brick[i][j].file], brick[i][j].alpha));
 
       // draw shadow lines
+      // vertical left
       DrawLineEx(
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2},
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 +
+                        shadow_thick / 2 + inner_margin,
+                    brick[i][j].position.y - brickSize.y / 2 + inner_margin},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 +
+                        shadow_thick / 2 + inner_margin,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
+                        inner_margin},
           shadow_thick,
           Fade(FILE_COLORS_DARK[brick[i][j].file], brick[i][j].alpha));
+
+      // horizontal down
       DrawLineEx(
-          (Vector2){brick[i][j].position.x - brickSize.x / 2,
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + inner_margin,
                     brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
-                        shadow_thick / 2},
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
+                        shadow_thick / 2 - inner_margin},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        inner_margin,
                     brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
-                        shadow_thick / 2},
+                        shadow_thick / 2 - inner_margin},
           shadow_thick,
           Fade(FILE_COLORS_DARK[brick[i][j].file], brick[i][j].alpha));
+
+      // horizontal top
       DrawLineEx(
-          (Vector2){brick[i][j].position.x - brickSize.x / 2,
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + inner_margin,
                     brick[i][j].position.y - brickSize.y / 2 +
-                        shadow_thick / 2},
-          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x,
+                        shadow_thick / 2 + inner_margin},
+          (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
+                        inner_margin,
                     brick[i][j].position.y - brickSize.y / 2 +
-                        shadow_thick / 2},
+                        shadow_thick / 2 + inner_margin},
           shadow_thick,
           Fade(FILE_COLORS_LIGHT[brick[i][j].file], brick[i][j].alpha));
+
+      // vertical right
       DrawLineEx(
           (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
-                        shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2},
+                        shadow_thick / 2 - inner_margin,
+                    brick[i][j].position.y - brickSize.y / 2 + inner_margin},
           (Vector2){brick[i][j].position.x - brickSize.x / 2 + brickSize.x -
-                        shadow_thick / 2,
-                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y},
+                        shadow_thick / 2 - inner_margin,
+                    brick[i][j].position.y - brickSize.y / 2 + brickSize.y -
+                        inner_margin},
           shadow_thick,
           Fade(FILE_COLORS_LIGHT[brick[i][j].file], brick[i][j].alpha));
     }
@@ -384,7 +484,9 @@ void DrawGameplayScreen() {
            center.y - TIMER_FONT_SIZE / 2, TIMER_FONT_SIZE, textColor);
 
   // Draw progress
-  DrawText("Progress", (LEFT_PANEL_WIDTH - MeasureText("Progress", LABEL_FONT_SIZE)) / 2, 650, LABEL_FONT_SIZE, WHITE);
+  DrawText("Progress",
+           (LEFT_PANEL_WIDTH - MeasureText("Progress", LABEL_FONT_SIZE)) / 2,
+           650, LABEL_FONT_SIZE, WHITE);
 
   int margin = 20;
   int height = 20;
@@ -395,7 +497,9 @@ void DrawGameplayScreen() {
       y += 50;
       DrawRectangleLines(margin, y, width, height, FILE_COLORS[i]);
       DrawRectangle(margin, y, width, height, Fade(FILE_COLORS[i], 0.3));
-      DrawRectangle(margin, y, width * (1 - (float) filesCounts[i] / filesTotalCounts[i]), height, FILE_COLORS[i]);
+      DrawRectangle(margin, y,
+                    width * (1 - (float)filesCounts[i] / filesTotalCounts[i]),
+                    height, FILE_COLORS[i]);
     }
   }
 
@@ -417,8 +521,6 @@ void DrawGameplayScreen() {
     DrawText(cd, (SCREEN_WIDTH - MeasureText(cd, 300)) / 2,
              (SCREEN_HEIGHT - 300) / 2, 300, RAYWHITE);
   }
-
-  
 
   // draw tutorial
   if (showTutorial) {
