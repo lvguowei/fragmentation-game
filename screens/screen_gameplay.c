@@ -48,11 +48,15 @@ static const Color TIMER_COLOR = LIGHTGRAY;
 static const Color TIMER_TEXT_COLOR = BLACK;
 static const Color TIMER_COLOR_ALARM = RED;
 
-static const Color FILE_COLORS[FILE_NUM] = {BLUE, LIME, VIOLET, GOLD};
-static const Color FILE_COLORS_DARK[FILE_NUM] = {DARKBLUE, DARKGREEN,
-                                                 DARKPURPLE, ORANGE};
-static const Color FILE_COLORS_LIGHT[FILE_NUM] = {SKYBLUE, GREEN, PURPLE,
-                                                  YELLOW};
+static const Color FILE_COLORS[FILE_NUM] = {
+    (Color){2, 136, 209, 255}, (Color){22, 128, 57, 255},
+    (Color){171, 71, 188, 255}, (Color){255, 82, 82, 255}};
+static const Color FILE_COLORS_DARK[FILE_NUM] = {
+    (Color){1, 51, 78, 255}, (Color){8, 48, 21, 255}, (Color){65, 26, 71, 255},
+    (Color){126, 0, 0, 255}};
+static const Color FILE_COLORS_LIGHT[FILE_NUM] = {
+    (Color){73, 190, 253, 255}, (Color){66, 223, 118, 255},
+    (Color){203, 142, 214, 255}, (Color){255, 149, 149, 255}};
 
 static Brick brick[MAX_ROWS][MAX_COLS];
 static int filesCounts[FILE_NUM] = {0};
@@ -297,13 +301,11 @@ void DrawGameplayScreen() {
   /*               Fade(FILE_COLORS[currentFile], 0.3)); */
 
   // Draw bricks
-  int shadow_thick = brickSize.x / 25;
+  int shadow_thick = brickSize.x / 23;
   int inner_margin = brickSize.x / 10;
-  Color conn_color_h;
-  Color conn_color_v = Fade(WHITE, 0.5);
-  int conn_thick_h = 4;
-  int conn_thick_v = 2;
-
+  Color empty_color = Fade(LIGHTGRAY, 0.3);
+  int conn_thick_h = 5;
+  int conn_thick_v = 3;
 
   // draw grid bg color
   int border_thick = 20;
@@ -325,16 +327,17 @@ void DrawGameplayScreen() {
 
   for (int i = 0; i < num_rows; i++) {
     for (int j = 0; j < num_cols; j++) {
+      Color conn_color_h;
       if (brick[i][j].state == PENDING) {
-        conn_color_h = FILE_COLORS[currentFile];
+        conn_color_h = FILE_COLORS[brick[i][j].file];
       } else {
-        conn_color_h = Fade(WHITE, 0.6);
+        conn_color_h = empty_color;
       }
       // draw grid bg
       DrawRectangle(MARGIN_LEFT + j * brickSize.x + inner_margin,
                     MARGIN_TOP + i * brickSize.y + inner_margin,
                     brickSize.x - 2 * inner_margin,
-                    brickSize.y - 2 * inner_margin, Fade(conn_color_v, 0.5));
+                    brickSize.y - 2 * inner_margin, empty_color);
 
       if (j != 0) {
         // right
@@ -345,6 +348,7 @@ void DrawGameplayScreen() {
                              MARGIN_TOP + i * brickSize.y + inner_margin +
                                  (brickSize.y - 2 * inner_margin) / 3},
                    conn_thick_h, conn_color_h);
+
         DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x,
                              MARGIN_TOP + i * brickSize.y + inner_margin +
                                  (brickSize.y - 2 * inner_margin) * 2 / 3},
@@ -363,6 +367,8 @@ void DrawGameplayScreen() {
                              MARGIN_TOP + i * brickSize.y + inner_margin +
                                  (brickSize.y - 2 * inner_margin) / 3},
                    conn_thick_h, conn_color_h);
+
+
         DrawLineEx((Vector2){MARGIN_LEFT + (j + 1) * brickSize.x - inner_margin,
                              MARGIN_TOP + i * brickSize.y + inner_margin +
                                  (brickSize.y - 2 * inner_margin) * 2 / 3},
@@ -380,14 +386,14 @@ void DrawGameplayScreen() {
                    (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) / 3,
                              MARGIN_TOP + i * brickSize.y + inner_margin},
-                   conn_thick_v, conn_color_v);
+                   conn_thick_v, empty_color);
         DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) * 2 / 3,
                              MARGIN_TOP + i * brickSize.y},
                    (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) * 2 / 3,
                              MARGIN_TOP + i * brickSize.y + inner_margin},
-                   conn_thick_v, conn_color_v);
+                   conn_thick_v, empty_color);
       }
 
       if (i != num_rows - 1) {
@@ -398,14 +404,14 @@ void DrawGameplayScreen() {
                    (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) / 3,
                              MARGIN_TOP + (i + 1) * brickSize.y},
-                   conn_thick_v, conn_color_v);
+                   conn_thick_v, empty_color);
         DrawLineEx((Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) * 2 / 3,
                              MARGIN_TOP + (i + 1) * brickSize.y - inner_margin},
                    (Vector2){MARGIN_LEFT + j * brickSize.x + inner_margin +
                                  (brickSize.x - 2 * inner_margin) * 2 / 3,
                              MARGIN_TOP + (i + 1) * brickSize.y},
-                   conn_thick_v, conn_color_v);
+                   conn_thick_v, empty_color);
       }
 
       DrawRectangle(brick[i][j].position.x - brickSize.x / 2 + inner_margin,
