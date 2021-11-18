@@ -1,5 +1,5 @@
 # Frag Figher
-Fight for file fragmentation!
+Fight for file fragmentation! Play online for free: http://fragfighter.surge.sh/
 
 This game is developed using C and Raylib.
 
